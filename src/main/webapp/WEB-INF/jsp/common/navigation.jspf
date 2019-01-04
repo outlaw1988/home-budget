@@ -8,25 +8,25 @@
     <a class="navbar-brand" href="/index">Domowy budżet</a>
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
+        <a class="nav-link" href="/add-category">Dodaj kategorię</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" href="#">Lista dochodów</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Lista wydatków</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Kategorie</a>
-      </li>
-      <li class="nav-item">
         <a class="nav-link" href="#">Główna tabela</a>
       </li>
     </ul>
-	<ul class="navbar-nav my-2 mt-lg-0">
-    	<li class="nav-item">
-        	<a class="nav-link" href="#">Użytkownik</a>
-      	</li>
-      	<li class="nav-item">
-        	<a class="nav-link" href="#">Wyloguj</a>
-      	</li>
+	<ul class="navbar-nav ml-auto mt-lg-0">
+   		<li class="nav-item">
+       		<a class="nav-link" href="#">Użytkownik</a>
+     	</li>
+     	<li class="nav-item">
+       		<a class="nav-link" href="#">Wyloguj</a>
+     	</li>
     </ul>
 
   </div>
