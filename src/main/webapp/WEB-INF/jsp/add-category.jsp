@@ -20,7 +20,9 @@
 		
 		<a id="add-main-category" type="button" class="btn btn-success" href="/add-main-category">+</a>
 		
-		<br/><br/>
+		<p style="height: 10px;"><form:errors class="error" path="category"/></p>
+		
+		<br/>
 		
 		<fieldset class="form-group">
 			<form:label path="name">Podkategoria:</form:label>

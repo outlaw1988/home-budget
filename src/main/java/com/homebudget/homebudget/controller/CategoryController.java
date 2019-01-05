@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -36,7 +37,19 @@ public class CategoryController {
 	}
 	
 	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
-	public String addCategoryPost(@Valid SubCategory subCategory) {
+	public String addCategoryPost(ModelMap model, SubCategory subCategory, BindingResult result) {
+		
+		if (subCategory.getCategory() == null) {
+			result.rejectValue("category", "error.category", "Wybierz kategorię");
+		}
+		
+		if (result.hasErrors()) {
+			
+			List<Category> categories = categoryRepository.findAll();
+			model.put("categories", categories);
+			
+			return "add-category";
+		}
 		
 		subCategoryRepository.save(subCategory);
 		

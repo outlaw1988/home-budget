@@ -18,6 +18,7 @@ public class SubCategory {
 	private int id;
 	
 	@OneToOne
+	@NotNull
 	private Category category;
 	
 	@Column(name = "name")
