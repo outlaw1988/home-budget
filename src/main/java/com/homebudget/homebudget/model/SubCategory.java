@@ -5,25 +5,26 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "category")
-public class Category {
+@Table(name = "sub_category")
+public class SubCategory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(name = "type")
-	private String type;
+	@OneToOne
+	private Category category;
 	
 	@Column(name = "name")
 	@NotNull
 	private String name;
 	
-	public Category() {
+	public SubCategory() {
 		
 	}
 
@@ -35,12 +36,12 @@ public class Category {
 		this.id = id;
 	}
 
-	public String getType() {
-		return type;
+	public Category getCategory() {
+		return category;
 	}
 
-	public void setType(String type) {
-		this.type = type;
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 	public String getName() {
@@ -50,5 +51,5 @@ public class Category {
 	public void setName(String name) {
 		this.name = name;
 	}
-
+	
 }

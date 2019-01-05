@@ -4,26 +4,23 @@
 
 <div class="container">
 
-	<form:form method="post" modelAttribute="subCategory">
+	<form:form method="post" modelAttribute="category">
+	
 		<form:hidden path="id" />
 	
 		<br/><br/>
 		
-		<form:label path="category">Kategoria:</form:label>
+		<form:label path="type">Typ:</form:label>
 		<br/>
-		<form:select path="category">
-		    <option value="">--WYBIERZ--</option>
-		    <c:forEach items="${categories}" var="category"> 
-            	<option value="${category.getId()}">${category.getName()} - ${category.getType()}</option> 
-            </c:forEach>
+		<form:select path="type">
+			<option value="wydatek">Wydatek</option>
+			<option value="dochód">Dochód</option>
 		</form:select>
-		
-		<a id="add-main-category" type="button" class="btn btn-success" href="/add-main-category">+</a>
-		
+	
 		<br/><br/>
 		
 		<fieldset class="form-group">
-			<form:label path="name">Podkategoria:</form:label>
+			<form:label path="name">Nazwa kategorii:</form:label>
 			<form:input path="name" type="text" class="form-control"
 				required="required" />
 			<form:errors path="name" class="error" />
@@ -32,7 +29,7 @@
 		<br/><br/>
 		
 		<button id="add-category" type="submit" class="btn btn-success">Dodaj</button>
-		
+	
 	</form:form>
 
 </div>
