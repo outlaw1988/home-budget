@@ -14,7 +14,7 @@
         <a class="nav-link" href="/expenditures">Wydatki</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">Dochody</a>
+        <a class="nav-link" href="/incomes">Dochody</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#">Główna tabela</a>
