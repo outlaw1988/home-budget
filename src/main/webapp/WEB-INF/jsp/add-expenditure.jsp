@@ -32,19 +32,28 @@
 		<br/>
 		<form:select id="sel-subcategory" path="subCategory">
 		    <option value="">--WYBIERZ--</option>
-		    <%-- <c:forEach items="${categories}" var="category"> 
-            	<option value="${category.getId()}">${category.getName()} - ${category.getType()}</option> 
-            </c:forEach> --%>
 		</form:select>
 		
 		<br/><br/>
 		
 		<fieldset class="form-group">
-			<form:label path="dateAndTime">Data:</form:label>
-			<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy HH:mm:ss" var="myDate" />
-			<form:input style="width: 250px;" path="dateAndTime" class="form-control" value="${myDate}"/>
-			<form:errors path="dateAndTime" class="error" />
+			<form:label path="description">Opis:</form:label>
+			<form:input path="description" type="text" class="form-control"/>
+			<form:errors path="description" class="error" />
 		</fieldset>
+		
+		<br/>
+		
+		<fieldset class="form-group">
+			<form:label path="dateTime">Data:</form:label>
+			<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy HH:mm:ss" var="myDate" />
+			<form:input style="width: 250px;" path="dateTime" class="form-control" value="${myDate}"/>
+			<form:errors path="dateTime" class="error" />
+		</fieldset>
+	
+		<br/><br/>
+		
+		<button id="add-category" type="submit" class="btn btn-success">Dodaj</button>
 	
 	</form:form>
 
@@ -78,8 +87,8 @@ $("#sel-category").change(function(){
 	    	
 	    	for(var i = 0; i < result.length; i++){
                /*  option = option + "<option value='" + data[sb].name + "'>" +data[sb].name + "</option>"; */
-               console.log("Subcategory name: " + result[i].name);
-               console.log("Subcategory id: " + result[i].id);
+               /* console.log("Subcategory name: " + result[i].name);
+               console.log("Subcategory id: " + result[i].id); */
                option = "<option value='" + result[i].id + "'>" + result[i].name + "</option>";
                slctSubcat.append(option);
             }

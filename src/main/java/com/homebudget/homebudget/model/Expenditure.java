@@ -28,14 +28,14 @@ public class Expenditure {
 	private String description;
 	
 	@Column(name = "date")
-	private Date dateAndTime;
+	private Date dateTime;
 	
 	public Expenditure() {
 		
 	}
 	
 	public Expenditure(Date date) {
-		this.dateAndTime = date;
+		this.dateTime = date;
 	}
 
 	public int getId() {
@@ -70,12 +70,12 @@ public class Expenditure {
 		this.description = description;
 	}
 
-	public Date getDateAndTime() {
-		return dateAndTime;
+	public Date getDateTime() {
+		return dateTime;
 	}
 
-	public void setDateAndTime(Date dateAndTime) {
-		this.dateAndTime = dateAndTime;
+	public void setDateTime(Date dateAndTime) {
+		this.dateTime = dateAndTime;
 	}
 	
 	

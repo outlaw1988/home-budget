@@ -15,6 +15,7 @@ import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Expenditure;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.service.CategoryRepository;
+import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 
 @Controller
@@ -25,9 +26,16 @@ public class ExpendituresController {
 	
 	@Autowired
 	SubCategoryRepository subCategoryRepository;
+	
+	@Autowired
+	ExpenditureRepository expenditureRepository;
 
 	@RequestMapping(value = "/expenditures", method = RequestMethod.GET)
-	public String expendituresList() {
+	public String expendituresList(ModelMap model) {
+		
+		List<Expenditure> expenditures = expenditureRepository.findAllByOrderByDateTimeDesc();
+		model.put("expenditures", expenditures);
+		
 		return "expenditures";
 	}
 	
@@ -43,10 +51,16 @@ public class ExpendituresController {
 		return "add-expenditure";
 	}
 	
+	@RequestMapping(value = "/add-expenditure", method = RequestMethod.POST)
+	public String addExpenditurePost(Expenditure expenditure) {
+		
+		expenditureRepository.save(expenditure);
+		
+		return "redirect:/expenditures";
+	}
+	
 	@RequestMapping(value = "/get-subcategories", method = RequestMethod.POST)
 	public @ResponseBody List<SubCategory> getSubCategories(@RequestBody CategoryId categoryId) {
-		
-		System.out.println("Category id: " + categoryId.categoryId);
 		
 		Category category = categoryRepository.findById(Integer.parseInt(categoryId.categoryId));
 		

@@ -2,12 +2,13 @@
 <%@ include file="common/navigation.jspf"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<!-- <div class="container">
+<div class="container">
 
-	Strona główna
+	<br/>
+	<div style="text-align:center;">
+		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-expenditure">Dodaj wydatek</a>
+	</div>
 
-</div> -->
-
-Strona główna
+</div>
 
 <%@ include file="common/footer.jspf"%>
