@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "expenditure")
 public class Expenditure {
@@ -74,8 +75,8 @@ public class Expenditure {
 		return dateTime;
 	}
 
-	public void setDateTime(Date dateAndTime) {
-		this.dateTime = dateAndTime;
+	public void setDateTime(Date dateTime) {
+		this.dateTime = dateTime;
 	}
 	
 	

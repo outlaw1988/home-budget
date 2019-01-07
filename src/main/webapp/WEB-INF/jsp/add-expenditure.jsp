@@ -2,6 +2,7 @@
 <%@ include file="common/navigation.jspf"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
+
 <div class="container">
 
 	<form:form method="post" modelAttribute="expenditure">
@@ -46,7 +47,7 @@
 		
 		<fieldset class="form-group">
 			<form:label path="dateTime">Data:</form:label>
-			<fmt:formatDate value="${currentDate}" pattern="dd/MM/yyyy HH:mm:ss" var="myDate" />
+			<fmt:formatDate value="${currentDate}" pattern="yyyy/MM/dd HH:mm:ss" var="myDate" />
 			<form:input style="width: 250px;" path="dateTime" class="form-control" value="${myDate}"/>
 			<form:errors path="dateTime" class="error" />
 		</fieldset>

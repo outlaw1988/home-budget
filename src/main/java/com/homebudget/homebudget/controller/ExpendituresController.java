@@ -1,5 +1,7 @@
 package com.homebudget.homebudget.controller;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -13,9 +15,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Expenditure;
+import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.ExpenditureRepository;
+import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 
 @Controller
@@ -29,6 +33,9 @@ public class ExpendituresController {
 	
 	@Autowired
 	ExpenditureRepository expenditureRepository;
+	
+	@Autowired
+	MonthYearRepository monthYearRepository;
 
 	@RequestMapping(value = "/expenditures", method = RequestMethod.GET)
 	public String expendituresList(ModelMap model) {
@@ -53,6 +60,18 @@ public class ExpendituresController {
 	
 	@RequestMapping(value = "/add-expenditure", method = RequestMethod.POST)
 	public String addExpenditurePost(Expenditure expenditure) {
+		
+		LocalDate localDate = expenditure.getDateTime().
+							toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+				
+		int year = localDate.getYear();
+		int month = localDate.getMonthValue();
+		
+		List<MonthYear> monthYearList = monthYearRepository.findByMonthAndYear(month, year);
+		
+		if (monthYearList.size() == 0) {
+			monthYearRepository.save(new MonthYear(month, year));
+		}
 		
 		expenditureRepository.save(expenditure);
 		
