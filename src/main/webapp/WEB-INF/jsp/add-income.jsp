@@ -66,7 +66,7 @@ $("#sel-category").change(function(){
 	var categoryId = $(this).val();
 	
 	var data = {
-	    "categoryId": categoryId,
+	    "categoryId": categoryId
 	}
 
 	var json = JSON.stringify(data);

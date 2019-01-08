@@ -29,6 +29,9 @@ public class Income {
 	
 	@Column(name = "date")
 	private Date dateTime;
+	
+	@OneToOne
+	private MonthYear monthYear;
 
 	public Income() {
 		//empty
@@ -73,6 +76,13 @@ public class Income {
 	public void setDateTime(Date dateTime) {
 		this.dateTime = dateTime;
 	}
-	
+
+	public MonthYear getMonthYear() {
+		return monthYear;
+	}
+
+	public void setMonthYear(MonthYear monthYear) {
+		this.monthYear = monthYear;
+	}
 	
 }

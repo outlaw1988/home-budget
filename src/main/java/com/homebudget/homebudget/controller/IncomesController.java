@@ -1,7 +1,5 @@
 package com.homebudget.homebudget.controller;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +16,7 @@ import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
+import com.homebudget.homebudget.utils.Utils;
 
 @Controller
 public class IncomesController {
@@ -36,6 +35,8 @@ public class IncomesController {
 
 	@RequestMapping(value = "/incomes", method = RequestMethod.GET)
 	public String incomesList(ModelMap model) {
+		
+		Utils.checkAndAddMonthYear(new Date(), monthYearRepository);
 		
 		List<Income> incomes = incomeRepository.findAllByOrderByDateTimeDesc();
 		model.put("incomes", incomes);
@@ -58,18 +59,9 @@ public class IncomesController {
 	@RequestMapping(value = "/add-income", method = RequestMethod.POST)
 	public String addIncomePost(Income income) {
 		
-		LocalDate localDate = income.getDateTime().
-				toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-	
-		int year = localDate.getYear();
-		int month = localDate.getMonthValue();
-		
-		List<MonthYear> monthYearList = monthYearRepository.findByMonthAndYear(month, year);
-		
-		if (monthYearList.size() == 0) {
-			monthYearRepository.save(new MonthYear(month, year));
-		}
+		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository);
 				
+		income.setMonthYear(monthYear);
 		incomeRepository.save(income);
 		
 		return "redirect:/incomes";
