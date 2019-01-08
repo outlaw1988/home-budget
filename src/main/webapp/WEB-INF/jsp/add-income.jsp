@@ -50,6 +50,7 @@
 			<form:input style="width: 250px;" path="dateTime" class="form-control" value="${myDate}"/>
 			<form:errors path="dateTime" class="error" />
 		</fieldset>
+		<span>[RRRR-MM-DD HH:MM:SS]</span>
 	
 		<br/><br/>
 		
