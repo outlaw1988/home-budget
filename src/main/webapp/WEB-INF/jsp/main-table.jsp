@@ -19,6 +19,29 @@
            	<option value="${month}">${month}</option> 
         </c:forEach>
 	</select>
+	
+	<br/><br/>
+	
+	<h3>Dochody</h3>
+	
+	<table class="table table-striped table-hover">
+	  <thead>
+	    <tr>
+	      <th scope="col">Kategoria</th>
+	      <th scope="col">Podkategoria</th>
+	      <th scope="col">Wartość</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <c:forEach items="${incomes}" var="income">
+	  		<tr>
+	        	<td>${income.subCategory.category.name}</td>
+	        	<td>${income.subCategory.name}</td>
+	        	<td>${income.sumValue}</td>
+	      	</tr>
+	  	</c:forEach>
+	  </tbody>
+	</table>
 
 </div>
 
@@ -50,6 +73,10 @@ $("#sel-year").change(function(){
             }
 	    }
 	});
+});
+
+$("#sel-month").change(function(){ 
+	console.log("Month has changed...");
 });
 
 </script>

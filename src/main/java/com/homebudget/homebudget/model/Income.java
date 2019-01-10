@@ -84,5 +84,13 @@ public class Income {
 	public void setMonthYear(MonthYear monthYear) {
 		this.monthYear = monthYear;
 	}
+
+	@Override
+	public String toString() {
+		return "Income [id=" + id + ", value=" + value + ", subCategory=" + subCategory + ", description=" + description
+				+ ", dateTime=" + dateTime + ", monthYear=" + monthYear + "]";
+	}
+	
+	
 	
 }

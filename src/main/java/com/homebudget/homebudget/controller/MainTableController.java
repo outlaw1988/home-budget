@@ -2,9 +2,11 @@ package com.homebudget.homebudget.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,14 +16,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.model.MonthYear;
+import com.homebudget.homebudget.model.SubCategory;
+import com.homebudget.homebudget.model.AccumulatedIncome;
+import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
+
 
 @Controller
 public class MainTableController {
 
 	@Autowired
 	MonthYearRepository monthYearRepository;
+	
+	@Autowired
+	IncomeRepository incomeRepository;
 	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
@@ -38,6 +48,16 @@ public class MainTableController {
 		model.put("years", yearsSorted);
 		model.put("months", months);
 		
+		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(months.get(0), yearsSorted.get(0));
+		List<Income> incomes = incomeRepository.findByMonthYear(monthYear.get(0));
+		
+		List<AccumulatedIncome> accumulatedIncomes = generateAccumulatedIncomes(incomes);
+		accumulatedIncomes = accumulatedIncomes.stream()
+							.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
+							.collect(Collectors.toList());
+		
+		model.put("incomes", accumulatedIncomes);
+		
 		return "main-table";
 	}
 	
@@ -47,6 +67,31 @@ public class MainTableController {
 		List<MonthYear> monthsYears = monthYearRepository.findAll();
 		
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
+	}
+	
+	private List<AccumulatedIncome> generateAccumulatedIncomes(List<Income> incomes) {
+		
+		List<AccumulatedIncome> accumulatedIncomes = new ArrayList<>();
+		Set<SubCategory> subCategories = new HashSet<>();
+		
+		for (Income income : incomes) {
+			subCategories.add(income.getSubCategory());
+		}
+		
+		for (SubCategory subCategory : subCategories) {
+			
+			float sum = 0f;
+			
+			for (Income income : incomes) {
+				if (subCategory.getId() == income.getSubCategory().getId()) {
+					sum += income.getValue();
+				}
+			}
+			
+			accumulatedIncomes.add(new AccumulatedIncome(subCategory, sum));
+		}
+		
+		return accumulatedIncomes;
 	}
 	
 	private List<Integer> getYearsSortedDesc(List<MonthYear> monthsYears) {

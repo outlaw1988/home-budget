@@ -85,16 +85,11 @@ $("#sel-category").change(function(){
             slctSubcat.empty();
             var option= "<option value=''>--WYBIERZ--</option>";
             slctSubcat.append(option);
-            //option = "";
 	    	
 	    	for(var i = 0; i < result.length; i++){
-               /*  option = option + "<option value='" + data[sb].name + "'>" +data[sb].name + "</option>"; */
-               /* console.log("Subcategory name: " + result[i].name);
-               console.log("Subcategory id: " + result[i].id); */
                option = "<option value='" + result[i].id + "'>" + result[i].name + "</option>";
                slctSubcat.append(option);
             }
-	    // do what ever you want with data
 	    }
     });
 	
