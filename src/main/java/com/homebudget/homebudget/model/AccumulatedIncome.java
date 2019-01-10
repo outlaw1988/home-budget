@@ -26,9 +26,9 @@ public class AccumulatedIncome {
 		this.sumValue = sumValue;
 	}
 	
-//	@Override
-//	public String toString() {
-//		return "AccumulatedIncome [subCategory=" + subCategory + ", sumValue=" + sumValue + "]";
-//	}
+	@Override
+	public String toString() {
+		return "AccumulatedIncome [subCategory=" + subCategory + ", sumValue=" + sumValue + "]";
+	}
 	
 }

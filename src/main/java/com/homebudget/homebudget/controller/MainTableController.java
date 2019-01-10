@@ -57,6 +57,7 @@ public class MainTableController {
 							.collect(Collectors.toList());
 		
 		model.put("incomes", accumulatedIncomes);
+		model.put("incomesSum", sumUpIncomes(accumulatedIncomes));
 		
 		return "main-table";
 	}
@@ -67,6 +68,17 @@ public class MainTableController {
 		List<MonthYear> monthsYears = monthYearRepository.findAll();
 		
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
+	}
+	
+	private float sumUpIncomes(List<AccumulatedIncome> accumulatedIncomes) {
+		
+		float sum = 0f;
+		
+		for (AccumulatedIncome ai : accumulatedIncomes) {
+			sum += ai.getSumValue();
+		}
+		
+		return sum;
 	}
 	
 	private List<AccumulatedIncome> generateAccumulatedIncomes(List<Income> incomes) {

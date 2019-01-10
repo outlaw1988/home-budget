@@ -40,6 +40,11 @@
 	        	<td>${income.sumValue}</td>
 	      	</tr>
 	  	</c:forEach>
+	  	<tr>
+	  		<td></td>
+	  		<td><b>Suma brutto: </b></td>
+	  		<td><b>${incomesSum}</b></td>
+	  	</tr>
 	  </tbody>
 	</table>
 
