@@ -43,7 +43,33 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<td><b>${incomesSum}</b></td>
+	  		<td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${incomesSum}"/></b></td>
+	  	</tr>
+	  </tbody>
+	</table>
+	
+	<h3>Wydatki</h3>
+	
+	<table class="table table-striped table-hover">
+	  <thead>
+	    <tr>
+	      <th scope="col">Kategoria</th>
+	      <th scope="col">Podkategoria</th>
+	      <th scope="col">Wartość</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	    <c:forEach items="${expenditures}" var="expenditure">
+	  		<tr>
+	        	<td>${expenditure.subCategory.category.name}</td>
+	        	<td>${expenditure.subCategory.name}</td>
+	        	<td>${expenditure.sumValue}</td>
+	      	</tr>
+	  	</c:forEach>
+	  	<tr>
+	  		<td></td>
+	  		<td><b>Suma brutto: </b></td>
+	  		<td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${expendituresSum}"/></b></td>
 	  	</tr>
 	  </tbody>
 	</table>

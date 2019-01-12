@@ -12,7 +12,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "income")
-public class Income {
+public class Income implements Item {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

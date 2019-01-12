@@ -13,7 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "expenditure")
-public class Expenditure {
+public class Expenditure implements Item {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

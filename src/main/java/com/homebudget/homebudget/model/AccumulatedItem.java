@@ -1,13 +1,15 @@
 package com.homebudget.homebudget.model;
 
-public class AccumulatedIncome {
+public class AccumulatedItem {
 	
 	private SubCategory subCategory;
 	private float sumValue;
+	private Type type;
 	
-	public AccumulatedIncome(SubCategory subCategory, float sumValue) {
+	public AccumulatedItem(SubCategory subCategory, float sumValue, Type type) {
 		this.subCategory = subCategory;
 		this.sumValue = sumValue;
+		this.type = type;
 	}
 
 	public SubCategory getSubCategory() {
@@ -26,9 +28,23 @@ public class AccumulatedIncome {
 		this.sumValue = sumValue;
 	}
 	
+	public Type getType() {
+		return type;
+	}
+
+	public void setType(Type type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "AccumulatedIncome [subCategory=" + subCategory + ", sumValue=" + sumValue + "]";
 	}
 	
+	public enum Type {
+		EXPENDITURE, INCOME;
+	}
+	
 }
+
+

@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.homebudget.homebudget.model.Income;
+import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
-import com.homebudget.homebudget.model.AccumulatedIncome;
+import com.homebudget.homebudget.model.AccumulatedItem;
+import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 
@@ -32,6 +34,9 @@ public class MainTableController {
 	
 	@Autowired
 	IncomeRepository incomeRepository;
+	
+	@Autowired
+	ExpenditureRepository expenditureRepository;
 	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
@@ -48,16 +53,33 @@ public class MainTableController {
 		model.put("years", yearsSorted);
 		model.put("months", months);
 		
-		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(months.get(0), yearsSorted.get(0));
-		List<Income> incomes = incomeRepository.findByMonthYear(monthYear.get(0));
+		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(months.get(0), 
+									yearsSorted.get(0));
 		
-		List<AccumulatedIncome> accumulatedIncomes = generateAccumulatedIncomes(incomes);
+		// Incomes
+		
+		List<? extends Item> incomes = incomeRepository.findByMonthYear(monthYear.get(0));
+		
+		List<AccumulatedItem> accumulatedIncomes = generateAccumulatedItems(incomes, "income");
 		accumulatedIncomes = accumulatedIncomes.stream()
 							.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
 							.collect(Collectors.toList());
 		
 		model.put("incomes", accumulatedIncomes);
-		model.put("incomesSum", sumUpIncomes(accumulatedIncomes));
+		model.put("incomesSum", sumUp(accumulatedIncomes));
+		
+		// Expenditures
+		
+		List<? extends Item> expenditures = expenditureRepository.findByMonthYear(monthYear.get(0));
+		
+		List<AccumulatedItem> accumulatedExpenditures = generateAccumulatedItems(expenditures, 
+																				"expenditure");
+		accumulatedExpenditures = accumulatedExpenditures.stream()
+							.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
+							.collect(Collectors.toList());
+		
+		model.put("expenditures", accumulatedExpenditures);
+		model.put("expendituresSum", sumUp(accumulatedExpenditures));
 		
 		return "main-table";
 	}
@@ -70,40 +92,46 @@ public class MainTableController {
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
 	}
 	
-	private float sumUpIncomes(List<AccumulatedIncome> accumulatedIncomes) {
+	private float sumUp(List<AccumulatedItem> accumulatedItems) {
 		
 		float sum = 0f;
 		
-		for (AccumulatedIncome ai : accumulatedIncomes) {
-			sum += ai.getSumValue();
+		for (AccumulatedItem it : accumulatedItems) {
+			sum += it.getSumValue();
 		}
 		
 		return sum;
 	}
 	
-	private List<AccumulatedIncome> generateAccumulatedIncomes(List<Income> incomes) {
+	private List<AccumulatedItem> generateAccumulatedItems(List<? extends Item> incomes, String type) {
 		
-		List<AccumulatedIncome> accumulatedIncomes = new ArrayList<>();
+		List<AccumulatedItem> accumulatedItems = new ArrayList<>();
 		Set<SubCategory> subCategories = new HashSet<>();
 		
-		for (Income income : incomes) {
-			subCategories.add(income.getSubCategory());
+		for (Item item : incomes) {
+			subCategories.add(item.getSubCategory());
 		}
 		
 		for (SubCategory subCategory : subCategories) {
 			
 			float sum = 0f;
 			
-			for (Income income : incomes) {
-				if (subCategory.getId() == income.getSubCategory().getId()) {
-					sum += income.getValue();
+			for (Item item : incomes) {
+				if (subCategory.getId() == item.getSubCategory().getId()) {
+					sum += item.getValue();
 				}
 			}
 			
-			accumulatedIncomes.add(new AccumulatedIncome(subCategory, sum));
+			if (type.equals("income")) {
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, AccumulatedItem.Type.INCOME));
+			} else if (type.equals("expenditure")) {
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, 
+															AccumulatedItem.Type.EXPENDITURE));
+			}
+			
 		}
 		
-		return accumulatedIncomes;
+		return accumulatedItems;
 	}
 	
 	private List<Integer> getYearsSortedDesc(List<MonthYear> monthsYears) {
