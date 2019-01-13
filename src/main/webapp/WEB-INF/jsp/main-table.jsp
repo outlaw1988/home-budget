@@ -79,7 +79,10 @@
 <script type="text/javascript">
 
 $("#sel-year").change(function(){ 
+	console.log("Year has changed");
 	var year = $(this).val();
+	
+	console.log("Year: " + year);
 	
 	var data = {
 		"year": year
@@ -102,12 +105,21 @@ $("#sel-year").change(function(){
                  option = "<option value='" + result[i] + "'>" + result[i] + "</option>";
                  slctMonth.append(option);
             }
+			
+			var month = $("#sel-month").val();
+			month.selectedIndex = 0;
+			console.log("Month: " + month);
 	    }
 	});
+	
 });
 
 $("#sel-month").change(function(){ 
 	console.log("Month has changed...");
+	var month = $(this).val();
+	var year = $("#sel-year").val();
+	console.log("Month: " + month);
+	console.log("Year: " + year);
 });
 
 </script>

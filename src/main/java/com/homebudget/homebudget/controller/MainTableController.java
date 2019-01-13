@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,12 +102,12 @@ public class MainTableController {
 		return sum;
 	}
 	
-	private List<AccumulatedItem> generateAccumulatedItems(List<? extends Item> incomes, String type) {
+	private List<AccumulatedItem> generateAccumulatedItems(List<? extends Item> items, String type) {
 		
 		List<AccumulatedItem> accumulatedItems = new ArrayList<>();
 		Set<SubCategory> subCategories = new HashSet<>();
 		
-		for (Item item : incomes) {
+		for (Item item : items) {
 			subCategories.add(item.getSubCategory());
 		}
 		
@@ -116,7 +115,7 @@ public class MainTableController {
 			
 			float sum = 0f;
 			
-			for (Item item : incomes) {
+			for (Item item : items) {
 				if (subCategory.getId() == item.getSubCategory().getId()) {
 					sum += item.getValue();
 				}
