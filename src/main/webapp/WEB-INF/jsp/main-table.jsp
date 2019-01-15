@@ -24,7 +24,7 @@
 	
 	<h3>Dochody</h3>
 	
-	<table class="table table-striped table-hover">
+	<table id="incomes-table" class="table table-striped table-hover">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -50,7 +50,7 @@
 	
 	<h3>Wydatki</h3>
 	
-	<table class="table table-striped table-hover">
+	<table id="expenditures-table" class="table table-striped table-hover">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -109,6 +109,12 @@ $("#sel-year").change(function(){
 			var month = $("#sel-month").val();
 			month.selectedIndex = 0;
 			console.log("Month: " + month);
+			
+			removeTableContent("incomes-table");
+			removeTableContent("expenditures-table");
+			
+			updateTable("incomes", month, year);
+			updateTable("expenditures", month, year);
 	    }
 	});
 	
@@ -120,7 +126,59 @@ $("#sel-month").change(function(){
 	var year = $("#sel-year").val();
 	console.log("Month: " + month);
 	console.log("Year: " + year);
+	
+	removeTableContent("incomes-table");
+	removeTableContent("expenditures-table");
+	
+	updateTable("incomes", month, year);
+	updateTable("expenditures", month, year);
 });
+
+function updateTable(tableType, month, year) {
+	
+	var data = {
+		"month": month,
+		"year": year
+	}
+	
+	var json = JSON.stringify(data);
+	var urlData = "";
+	
+	if (tableType == "incomes") {
+		urlData = "/get-incomes-table";
+	} else if (tableType == "expenditures") {
+		urlData = "/get-expenditures-table";
+	}
+	
+	$.ajax({
+		type: "POST",
+		contentType: "application/json; charset=utf-8",
+	    dataType : 'json',
+	    url: urlData,
+	    data: json,
+		success :function(result) {
+			for(var i = 0; i < result.length; i++){
+				console.log("Subcategory: " + result[i].subCategory.name);
+				console.log("Result value: " + result[i].sumValue);
+            }
+			
+			drawTable(result);
+	    }
+	});
+}
+
+function drawTable(data) {
+	
+}
+
+function removeTableContent(tableName) {
+	var table = document.getElementById(tableName);
+	var rowCount = table.rows.length;
+	for (var x = rowCount - 1; x > 0; x--) {
+		table.deleteRow(x);
+	}
+	
+}
 
 </script>
 

@@ -52,30 +52,18 @@ public class MainTableController {
 		model.put("years", yearsSorted);
 		model.put("months", months);
 		
-		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(months.get(0), 
-									yearsSorted.get(0));
-		
 		// Incomes
 		
-		List<? extends Item> incomes = incomeRepository.findByMonthYear(monthYear.get(0));
-		
-		List<AccumulatedItem> accumulatedIncomes = generateAccumulatedItems(incomes, "income");
-		accumulatedIncomes = accumulatedIncomes.stream()
-							.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
-							.collect(Collectors.toList());
+		List<AccumulatedItem> accumulatedIncomes = manageAccumulation(months.get(0), 
+													yearsSorted.get(0), "income");
 		
 		model.put("incomes", accumulatedIncomes);
 		model.put("incomesSum", sumUp(accumulatedIncomes));
 		
 		// Expenditures
 		
-		List<? extends Item> expenditures = expenditureRepository.findByMonthYear(monthYear.get(0));
-		
-		List<AccumulatedItem> accumulatedExpenditures = generateAccumulatedItems(expenditures, 
-																				"expenditure");
-		accumulatedExpenditures = accumulatedExpenditures.stream()
-							.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
-							.collect(Collectors.toList());
+		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(months.get(0), 
+													yearsSorted.get(0), "expenditure");
 		
 		model.put("expenditures", accumulatedExpenditures);
 		model.put("expendituresSum", sumUp(accumulatedExpenditures));
@@ -89,6 +77,48 @@ public class MainTableController {
 		List<MonthYear> monthsYears = monthYearRepository.findAll();
 		
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
+	}
+	
+	
+	// TODO SUM!!!!
+	
+	@RequestMapping(value = "/get-incomes-table", method = RequestMethod.POST)
+	public @ResponseBody List<AccumulatedItem> getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
+		
+//		System.out.println("Incomes: ");
+//		System.out.println("Month inc: " + monthYearReq.month);
+//		System.out.println("Year inc: " + monthYearReq.year);
+		
+		return manageAccumulation(Integer.parseInt(monthYearReq.month), 
+								  Integer.parseInt(monthYearReq.year), "income");
+	}
+	
+	@RequestMapping(value = "/get-expenditures-table", method = RequestMethod.POST)
+	public @ResponseBody List<AccumulatedItem> getExpendituresTable(@RequestBody MonthYearRequest 
+																	monthYearReq) {
+		
+//		System.out.println("Expenditures: ");
+//		System.out.println("Month ex: " + monthYear.month);
+//		System.out.println("Year ex: " + monthYear.year);
+		
+		return manageAccumulation(Integer.parseInt(monthYearReq.month), 
+				  				  Integer.parseInt(monthYearReq.year), "expenditure");
+	}
+	
+	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
+		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(month, year);
+		List<? extends Item> items = null;
+		
+		if (type.equals("income")) {
+			items = incomeRepository.findByMonthYear(monthYear.get(0));
+		} else if (type.equals("expenditure")) {
+			items = expenditureRepository.findByMonthYear(monthYear.get(0));
+		}
+		
+		List<AccumulatedItem> accumulatedItems = generateAccumulatedItems(items, type);
+		return accumulatedItems.stream()
+				.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
+				.collect(Collectors.toList());
 	}
 	
 	private float sumUp(List<AccumulatedItem> accumulatedItems) {
@@ -165,5 +195,11 @@ public class MainTableController {
 
 // Auxiliary classes
 class Year {
+	public String year;
+}
+
+
+class MonthYearRequest {
+	public String month;
 	public String year;
 }
