@@ -157,17 +157,47 @@ function updateTable(tableType, month, year) {
 	    url: urlData,
 	    data: json,
 		success :function(result) {
-			for(var i = 0; i < result.length; i++){
-				console.log("Subcategory: " + result[i].subCategory.name);
-				console.log("Result value: " + result[i].sumValue);
+			for(var i = 0; i < result.accumulatedItems.length; i++){
+				console.log("Subcategory: " + result.accumulatedItems[i].subCategory.name);
+				console.log("Result value: " + result.accumulatedItems[i].sumValue);
             }
 			
-			drawTable(result);
+			console.log("Total sum is: " + result.sum);
+			
+			drawTable(result, tableType);
 	    }
 	});
 }
 
-function drawTable(data) {
+function drawTable(data, tableType) {
+	
+	var tableId = "";
+	
+	if (tableType == "incomes") {
+		tableId = "incomes-table";
+	} else if (tableType == "expenditures") {
+		tableId = "expenditures-table";
+	}
+	
+	var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+	
+	for (var i = 0; i < data.accumulatedItems.length; i++) {
+		var row = table.insertRow(-1);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		cell1.innerHTML = data.accumulatedItems[i].subCategory.category.name;
+		cell2.innerHTML = data.accumulatedItems[i].subCategory.name;
+		cell3.innerHTML = data.accumulatedItems[i].sumValue;
+	}
+	
+	var row = table.insertRow(-1);
+	var cell1 = row.insertCell(0);
+	var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+	cell1.innerHTML = "";
+	cell2.innerHTML = "<b>Suma brutto:</b>";
+	cell3.innerHTML = "<b>" + data.sum + "</b>";
 	
 }
 

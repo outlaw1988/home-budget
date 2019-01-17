@@ -83,26 +83,24 @@ public class MainTableController {
 	// TODO SUM!!!!
 	
 	@RequestMapping(value = "/get-incomes-table", method = RequestMethod.POST)
-	public @ResponseBody List<AccumulatedItem> getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
+	public @ResponseBody AccumulatedItemResponse getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
 		
-//		System.out.println("Incomes: ");
-//		System.out.println("Month inc: " + monthYearReq.month);
-//		System.out.println("Year inc: " + monthYearReq.year);
+		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
+				  								Integer.parseInt(monthYearReq.year), "income");
+		float sum = sumUp(accumulatedItems);
 		
-		return manageAccumulation(Integer.parseInt(monthYearReq.month), 
-								  Integer.parseInt(monthYearReq.year), "income");
+		return new AccumulatedItemResponse(accumulatedItems, sum);
 	}
 	
 	@RequestMapping(value = "/get-expenditures-table", method = RequestMethod.POST)
-	public @ResponseBody List<AccumulatedItem> getExpendituresTable(@RequestBody MonthYearRequest 
+	public @ResponseBody AccumulatedItemResponse getExpendituresTable(@RequestBody MonthYearRequest 
 																	monthYearReq) {
 		
-//		System.out.println("Expenditures: ");
-//		System.out.println("Month ex: " + monthYear.month);
-//		System.out.println("Year ex: " + monthYear.year);
-		
-		return manageAccumulation(Integer.parseInt(monthYearReq.month), 
-				  				  Integer.parseInt(monthYearReq.year), "expenditure");
+		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
+												Integer.parseInt(monthYearReq.year), "expenditure");
+		float sum = sumUp(accumulatedItems);
+
+		return new AccumulatedItemResponse(accumulatedItems, sum);
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
@@ -194,6 +192,7 @@ public class MainTableController {
 }
 
 // Auxiliary classes
+
 class Year {
 	public String year;
 }
@@ -202,4 +201,18 @@ class Year {
 class MonthYearRequest {
 	public String month;
 	public String year;
+}
+
+
+class AccumulatedItemResponse {
+	
+	public List<AccumulatedItem> accumulatedItems;
+	public float sum;
+	
+	public AccumulatedItemResponse(List<AccumulatedItem> accumulatedItems, float sum) {
+		super();
+		this.accumulatedItems = accumulatedItems;
+		this.sum = sum;
+	}
+	
 }
