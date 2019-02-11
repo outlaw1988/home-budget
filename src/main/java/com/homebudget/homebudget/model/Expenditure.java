@@ -1,5 +1,6 @@
 package com.homebudget.homebudget.model;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -19,8 +20,8 @@ public class Expenditure implements Item {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int id;
 	
-	@Column(name = "name")
-	private float value;
+	@Column(name = "value")
+	private BigDecimal value;
 	
 	@OneToOne
 	private SubCategory subCategory;
@@ -50,11 +51,11 @@ public class Expenditure implements Item {
 		this.id = id;
 	}
 
-	public float getValue() {
-		return value;
+	public BigDecimal getValue() {
+		return this.value;
 	}
 
-	public void setValue(float value) {
+	public void setValue(BigDecimal value) {
 		this.value = value;
 	}
 

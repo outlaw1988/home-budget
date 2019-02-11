@@ -1,5 +1,6 @@
 package com.homebudget.homebudget.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -87,7 +88,7 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 				  								Integer.parseInt(monthYearReq.year), "income");
-		float sum = sumUp(accumulatedItems);
+		BigDecimal sum = sumUp(accumulatedItems);
 		
 		return new AccumulatedItemResponse(accumulatedItems, sum);
 	}
@@ -98,7 +99,7 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 												Integer.parseInt(monthYearReq.year), "expenditure");
-		float sum = sumUp(accumulatedItems);
+		BigDecimal sum = sumUp(accumulatedItems);
 
 		return new AccumulatedItemResponse(accumulatedItems, sum);
 	}
@@ -119,12 +120,12 @@ public class MainTableController {
 				.collect(Collectors.toList());
 	}
 	
-	private float sumUp(List<AccumulatedItem> accumulatedItems) {
+	private BigDecimal sumUp(List<AccumulatedItem> accumulatedItems) {
 		
-		float sum = 0f;
+		BigDecimal sum = new BigDecimal(0);
 		
 		for (AccumulatedItem it : accumulatedItems) {
-			sum += it.getSumValue();
+			sum = sum.add(it.getSumValue());
 		}
 		
 		return sum;
@@ -141,11 +142,11 @@ public class MainTableController {
 		
 		for (SubCategory subCategory : subCategories) {
 			
-			float sum = 0f;
+			BigDecimal sum = new BigDecimal(0);
 			
 			for (Item item : items) {
 				if (subCategory.getId() == item.getSubCategory().getId()) {
-					sum += item.getValue();
+					sum = sum.add(item.getValue());
 				}
 			}
 			
@@ -207,9 +208,9 @@ class MonthYearRequest {
 class AccumulatedItemResponse {
 	
 	public List<AccumulatedItem> accumulatedItems;
-	public float sum;
+	public BigDecimal sum;
 	
-	public AccumulatedItemResponse(List<AccumulatedItem> accumulatedItems, float sum) {
+	public AccumulatedItemResponse(List<AccumulatedItem> accumulatedItems, BigDecimal sum) {
 		super();
 		this.accumulatedItems = accumulatedItems;
 		this.sum = sum;

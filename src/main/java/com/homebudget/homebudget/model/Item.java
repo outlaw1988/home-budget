@@ -1,9 +1,11 @@
 package com.homebudget.homebudget.model;
 
+import java.math.BigDecimal;
+
 public interface Item {
 
 	int getId();
 	SubCategory getSubCategory();
-	float getValue();
+	BigDecimal getValue();
 	
 }

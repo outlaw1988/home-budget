@@ -1,12 +1,14 @@
 package com.homebudget.homebudget.model;
 
+import java.math.BigDecimal;
+
 public class AccumulatedItem {
 	
 	private SubCategory subCategory;
-	private float sumValue;
+	private BigDecimal sumValue;
 	private Type type;
 	
-	public AccumulatedItem(SubCategory subCategory, float sumValue, Type type) {
+	public AccumulatedItem(SubCategory subCategory, BigDecimal sumValue, Type type) {
 		this.subCategory = subCategory;
 		this.sumValue = sumValue;
 		this.type = type;
@@ -20,11 +22,11 @@ public class AccumulatedItem {
 		this.subCategory = subCategory;
 	}
 
-	public float getSumValue() {
+	public BigDecimal getSumValue() {
 		return sumValue;
 	}
 
-	public void setSumValue(float sumValue) {
+	public void setSumValue(BigDecimal sumValue) {
 		this.sumValue = sumValue;
 	}
 	
