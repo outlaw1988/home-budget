@@ -13,8 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.SubCategory;
+import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
+import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Utils;
 
 @Controller
 public class CategoryController {
@@ -24,13 +27,17 @@ public class CategoryController {
 	
 	@Autowired
 	SubCategoryRepository subCategoryRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	@RequestMapping(value = {"/add-category"}, method = RequestMethod.GET)
 	public String addCategory(ModelMap model) {
 		
 		model.addAttribute("subCategory", new SubCategory());
 		
-		List<Category> categories = categoryRepository.findAll();
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<Category> categories = categoryRepository.findByUser(user);
 		model.put("categories", categories);
 		
 		return "add-category";
@@ -44,8 +51,8 @@ public class CategoryController {
 		}
 		
 		if (result.hasErrors()) {
-			
-			List<Category> categories = categoryRepository.findAll();
+			User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+			List<Category> categories = categoryRepository.findByUser(user);
 			model.put("categories", categories);
 			
 			return "add-category";
@@ -67,6 +74,8 @@ public class CategoryController {
 	@RequestMapping(value = "/add-main-category", method = RequestMethod.POST)
 	public String addMainCategoryPost(@Valid Category category) {
 		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		category.setUser(user);
 		categoryRepository.save(category);
 		
 		return "redirect:/add-category";

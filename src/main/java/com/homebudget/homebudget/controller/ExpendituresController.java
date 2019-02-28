@@ -15,10 +15,12 @@ import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Expenditure;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
+import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
+import com.homebudget.homebudget.service.UserRepository;
 import com.homebudget.homebudget.utils.Utils;
 
 @Controller
@@ -35,13 +37,18 @@ public class ExpendituresController {
 	
 	@Autowired
 	MonthYearRepository monthYearRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	@RequestMapping(value = "/expenditures", method = RequestMethod.GET)
 	public String expendituresList(ModelMap model) {
 		
-		Utils.checkAndAddMonthYear(new Date(), monthYearRepository);
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
-		List<Expenditure> expenditures = expenditureRepository.findAllByOrderByDateTimeDesc();
+		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
+		
+		List<Expenditure> expenditures = expenditureRepository.findByUserOrderByDateTimeDesc(user);
 		model.put("expenditures", expenditures);
 		
 		return "expenditures";
@@ -53,7 +60,9 @@ public class ExpendituresController {
 		model.addAttribute("expenditure", new Expenditure());
 		model.put("currentDate", new Date());
 		
-		List<Category> categories = categoryRepository.findByType("wydatek");
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
 		model.put("categories", categories);
 		
 		return "add-expenditure";
@@ -62,9 +71,12 @@ public class ExpendituresController {
 	@RequestMapping(value = "/add-expenditure", method = RequestMethod.POST)
 	public String addExpenditurePost(Expenditure expenditure) {
 		
-		MonthYear monthYear = Utils.checkAndAddMonthYear(expenditure.getDateTime(), monthYearRepository);
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		MonthYear monthYear = Utils.checkAndAddMonthYear(expenditure.getDateTime(), monthYearRepository, 
+				user);
 		
 		expenditure.setMonthYear(monthYear);
+		expenditure.setUser(user);
 		expenditureRepository.save(expenditure);
 		
 		return "redirect:/expenditures";

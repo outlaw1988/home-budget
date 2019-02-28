@@ -33,6 +33,9 @@ public class Income implements Item {
 	
 	@OneToOne
 	private MonthYear monthYear;
+	
+	@OneToOne
+	private User user;
 
 	public Income() {
 		//empty
@@ -85,13 +88,19 @@ public class Income implements Item {
 	public void setMonthYear(MonthYear monthYear) {
 		this.monthYear = monthYear;
 	}
+	
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	@Override
 	public String toString() {
 		return "Income [id=" + id + ", value=" + value + ", subCategory=" + subCategory + ", description=" + description
 				+ ", dateTime=" + dateTime + ", monthYear=" + monthYear + "]";
 	}
-	
-	
 	
 }

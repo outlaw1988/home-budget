@@ -51,7 +51,7 @@
 			<form:input style="width: 250px;" path="dateTime" class="form-control" value="${myDate}"/>
 			<form:errors path="dateTime" class="error" />
 		</fieldset>
-		<span>[RRRR-MM-DD HH:MM:SS]</span>
+		<span>[RRRR/MM/DD HH:MM:SS]</span>
 	
 		<br/><br/>
 		
@@ -62,6 +62,14 @@
 </div>
 
 <script type="text/javascript"> 
+
+$(function () {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function (e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+});
 
 $("#sel-category").change(function(){ 
 	

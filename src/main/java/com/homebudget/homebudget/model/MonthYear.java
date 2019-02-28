@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -21,13 +22,17 @@ public class MonthYear {
 	@Column(name = "year")
 	private int year;
 	
+	@OneToOne
+	private User user;
+	
 	public MonthYear() {
 		//empty
 	}
 	
-	public MonthYear(int month, int year) {
+	public MonthYear(int month, int year, User user) {
 		this.month = month;
 		this.year = year;
+		this.user = user;
 	}
 
 	public int getId() {
@@ -52,6 +57,14 @@ public class MonthYear {
 
 	public void setYear(int year) {
 		this.year = year;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 	
 }
