@@ -2,6 +2,9 @@ package com.homebudget.homebudget.controller;
 
 import java.util.Date;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +20,11 @@ public class MainController {
 	MonthYearRepository monthYearRepository;
 	
 	@RequestMapping(value = {"/index", "/"}, method = RequestMethod.GET)
-	public String index() {
+	public String index(HttpServletRequest request) {
 		
 		Utils.checkAndAddMonthYear(new Date(), monthYearRepository);
+		HttpSession session = request.getSession();
+		session.setAttribute("username", Utils.getLoggedInUserName());
 		
 		return "index";
 	}
