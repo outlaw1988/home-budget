@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +23,9 @@ public class Category {
 	@Column(name = "name")
 	@NotNull
 	private String name;
+	
+	@OneToOne
+	private User user;
 	
 	public Category() {
 		
@@ -49,6 +53,14 @@ public class Category {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 }

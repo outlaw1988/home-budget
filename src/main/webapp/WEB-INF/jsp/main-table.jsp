@@ -78,6 +78,14 @@
 
 <script type="text/javascript">
 
+$(function () {
+    var token = $("meta[name='_csrf']").attr("content");
+    var header = $("meta[name='_csrf_header']").attr("content");
+    $(document).ajaxSend(function (e, xhr, options) {
+        xhr.setRequestHeader(header, token);
+    });
+});
+
 $("#sel-year").change(function(){ 
 	console.log("Year has changed");
 	var year = $(this).val();

@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.model.MonthYear;
+import com.homebudget.homebudget.model.User;
 
 public interface IncomeRepository extends JpaRepository<Income, Integer> {
 	
-	List<Income> findAllByOrderByDateTimeDesc();
+	List<Income> findByUserOrderByDateTimeDesc(User user);
 	List<Income> findByMonthYear(MonthYear monthYear);
 	
 }

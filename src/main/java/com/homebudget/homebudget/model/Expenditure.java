@@ -35,6 +35,9 @@ public class Expenditure implements Item {
 	@OneToOne
 	private MonthYear monthYear;
 	
+	@OneToOne
+	private User user;
+	
 	public Expenditure() {
 		
 	}
@@ -90,5 +93,13 @@ public class Expenditure implements Item {
 	public void setMonthYear(MonthYear monthYear) {
 		this.monthYear = monthYear;
 	}
-	
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 }

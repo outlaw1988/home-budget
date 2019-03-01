@@ -20,10 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
+import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.model.AccumulatedItem;
 import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
+import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Utils;
 
 
 @Controller
@@ -38,11 +41,14 @@ public class MainTableController {
 	@Autowired
 	ExpenditureRepository expenditureRepository;
 	
+	@Autowired
+	UserRepository userRepository;
+	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
 		
-		// TODO add users
-		List<MonthYear> monthsYears = monthYearRepository.findAll();
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
 		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
 		//System.out.println("Years sorted: " + yearsSorted);
@@ -54,7 +60,6 @@ public class MainTableController {
 		model.put("months", months);
 		
 		// Incomes
-		
 		List<AccumulatedItem> accumulatedIncomes = manageAccumulation(months.get(0), 
 													yearsSorted.get(0), "income");
 		
@@ -62,7 +67,6 @@ public class MainTableController {
 		model.put("incomesSum", sumUp(accumulatedIncomes));
 		
 		// Expenditures
-		
 		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(months.get(0), 
 													yearsSorted.get(0), "expenditure");
 		
@@ -75,13 +79,11 @@ public class MainTableController {
 	@RequestMapping(value = "/change-year", method = RequestMethod.POST)
 	public @ResponseBody List<Integer> changeYearAndGetMonths(@RequestBody Year year) {
 		
-		List<MonthYear> monthsYears = monthYearRepository.findAll();
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
 	}
-	
-	
-	// TODO SUM!!!!
 	
 	@RequestMapping(value = "/get-incomes-table", method = RequestMethod.POST)
 	public @ResponseBody AccumulatedItemResponse getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
@@ -105,7 +107,8 @@ public class MainTableController {
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
-		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYear(month, year);
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
 		List<? extends Item> items = null;
 		
 		if (type.equals("income")) {

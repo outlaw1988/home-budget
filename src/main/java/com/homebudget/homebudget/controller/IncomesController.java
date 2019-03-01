@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.model.MonthYear;
+import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
+import com.homebudget.homebudget.service.UserRepository;
 import com.homebudget.homebudget.utils.Utils;
 
 @Controller
@@ -32,13 +34,17 @@ public class IncomesController {
 	
 	@Autowired
 	MonthYearRepository monthYearRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	@RequestMapping(value = "/incomes", method = RequestMethod.GET)
 	public String incomesList(ModelMap model) {
 		
-		Utils.checkAndAddMonthYear(new Date(), monthYearRepository);
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
 		
-		List<Income> incomes = incomeRepository.findAllByOrderByDateTimeDesc();
+		List<Income> incomes = incomeRepository.findByUserOrderByDateTimeDesc(user);
 		model.put("incomes", incomes);
 		
 		return "incomes";
@@ -47,10 +53,12 @@ public class IncomesController {
 	@RequestMapping(value = "/add-income", method = RequestMethod.GET)
 	public String addIncome(ModelMap model) {
 		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
 		model.addAttribute("income", new Income());
 		model.put("currentDate", new Date());
 		
-		List<Category> categories = categoryRepository.findByType("dochód");
+		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
 		model.put("categories", categories);
 		
 		return "add-income";
@@ -59,9 +67,11 @@ public class IncomesController {
 	@RequestMapping(value = "/add-income", method = RequestMethod.POST)
 	public String addIncomePost(Income income) {
 		
-		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository);
-				
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, user);
+		
 		income.setMonthYear(monthYear);
+		income.setUser(user);
 		incomeRepository.save(income);
 		
 		return "redirect:/incomes";
