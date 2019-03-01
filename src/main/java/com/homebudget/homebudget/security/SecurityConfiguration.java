@@ -54,7 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.and()
 				.rememberMe()
 				.rememberMeCookieName("home-budget-login-cookie")
-				.tokenValiditySeconds(7 * 24 * 60 * 60)
+				.tokenValiditySeconds(365 * 24 * 60 * 60)
 				.rememberMeParameter("remember-me")
 				.tokenRepository(persistentTokenRepository())
 			.and()
