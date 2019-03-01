@@ -1,5 +1,6 @@
 package com.homebudget.homebudget.controller;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -77,7 +78,11 @@ public class AuthenticationController {
 		if (auth != null) {
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}
-		return "redirect:/";
+		// removing cookie
+		Cookie userNameCookieRemove = new Cookie("home-budget-login-cookie", "");
+		userNameCookieRemove.setMaxAge(0);
+		response.addCookie(userNameCookieRemove);
+		return "redirect:/login";
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
