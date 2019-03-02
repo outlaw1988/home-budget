@@ -5,6 +5,8 @@
 
 <div class="container">
 
+	<h1>Dodaj wydatek</h1>
+
 	<form:form method="post" modelAttribute="expenditure">
 	
 		<br/>

@@ -12,5 +12,6 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Intege
 
 	List<Expenditure> findByUserOrderByDateTimeDesc(User user);
 	List<Expenditure> findByMonthYear(MonthYear monthYear);
+	Expenditure findById(int id);
 	
 }

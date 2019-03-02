@@ -4,6 +4,7 @@
 
 <div class="container">
 
+	<h1>Domowy budżet</h1>
 	<br/>
 	<div style="text-align:center;">
 		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-expenditure">Dodaj wydatek</a>
