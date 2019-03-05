@@ -4,10 +4,12 @@
 
 <div class="container">
 
+	<h1>Dodaj kategorię</h1>
+
 	<form:form method="post" modelAttribute="subCategory">
 		<form:hidden path="id" />
 	
-		<br/><br/>
+		<br/>
 		
 		<form:label path="category">Kategoria:</form:label>
 		<br/>

@@ -12,5 +12,6 @@ public interface IncomeRepository extends JpaRepository<Income, Integer> {
 	
 	List<Income> findByUserOrderByDateTimeDesc(User user);
 	List<Income> findByMonthYear(MonthYear monthYear);
+	Income findById(int id);
 	
 }

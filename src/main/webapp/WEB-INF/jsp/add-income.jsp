@@ -4,6 +4,8 @@
 
 <div class="container">
 
+	<h1>Dodaj dochód</h1>
+
 	<form:form method="post" modelAttribute="income">
 	
 		<br/>
