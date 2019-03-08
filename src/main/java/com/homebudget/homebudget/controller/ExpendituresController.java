@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -112,6 +114,45 @@ public class ExpendituresController {
 		if (params.contains("yes")) {
 			expenditureRepository.deleteById(expenditureId);
 		}
+		
+		return "redirect:/expenditures";
+	}
+	
+	@RequestMapping(value = "/update-expenditure-{expenditureId}", method = RequestMethod.GET)
+	public String updateExpenditureGet(ModelMap model, 
+			@PathVariable(value="expenditureId") int expenditureId) {
+		
+		Expenditure expenditure = expenditureRepository.findById(expenditureId);
+		
+		if (!expenditure.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("expenditure", expenditure);
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
+		model.put("categories", categories);
+		
+		List<SubCategory> subCategories = subCategoryRepository.findByCategory(expenditure.getSubCategory().getCategory());
+		model.put("subCategories", subCategories);
+		
+		return "update-expenditure";
+	}
+	
+	@RequestMapping(value = "/update-expenditure-{expenditureId}", method = RequestMethod.POST)
+	public String updateExpenditurePost(ModelMap model, @Valid Expenditure expenditure, 
+			BindingResult result) {
+		
+		if (!expenditure.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		MonthYear monthYear = Utils.checkAndAddMonthYear(expenditure.getDateTime(), monthYearRepository, 
+				expenditure.getUser());
+		expenditure.setMonthYear(monthYear);
+		
+		expenditureRepository.save(expenditure);
 		
 		return "redirect:/expenditures";
 	}
