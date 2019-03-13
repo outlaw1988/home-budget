@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +43,8 @@ public class IncomesController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	private Date currentDate;
 
 	@RequestMapping(value = "/incomes", method = RequestMethod.GET)
 	public String incomesList(ModelMap model) {
@@ -61,7 +64,8 @@ public class IncomesController {
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
 		model.addAttribute("income", new Income());
-		model.put("currentDate", new Date());
+		currentDate = new Date();
+		model.put("currentDate", currentDate);
 		
 		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
 		model.put("categories", categories);
@@ -70,9 +74,22 @@ public class IncomesController {
 	}
 	
 	@RequestMapping(value = "/add-income", method = RequestMethod.POST)
-	public String addIncomePost(Income income) {
+	public String addIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		if (income.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+			model.put("categories", categories);
+			model.put("currentDate", currentDate);
+			return "add-income";
+		}
+		
 		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, user);
 		
 		income.setMonthYear(monthYear);
@@ -135,10 +152,23 @@ public class IncomesController {
 	}
 	
 	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.POST)
-	public String updateIncomePost(ModelMap model, @Valid Income income) {
+	public String updateIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
 		
 		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
 			return "forbidden";
+		}
+		
+		if (income.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", 
+					income.getUser());
+			model.put("categories", categories);
+			
+			return "update-income";
 		}
 		
 		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, 

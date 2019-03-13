@@ -83,7 +83,8 @@ public class ExpendituresController {
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
 		if (expenditure.getSubCategory() == null) {
-			result.rejectValue("subCategory", "error.subCategory", "Kategoria/podkategoria nie może być pusta");
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
 		}
 		
 		if (result.hasErrors()) {

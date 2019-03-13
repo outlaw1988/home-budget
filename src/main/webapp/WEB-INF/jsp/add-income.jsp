@@ -35,8 +35,10 @@
 		<form:select id="sel-subcategory" path="subCategory">
 		    <option value="">--WYBIERZ--</option>
 		</form:select>
+		<br/>
+		<p><form:errors class="error" path="subCategory"/></p>
 		
-		<br/><br/>
+		<br/>
 		
 		<fieldset class="form-group">
 			<form:label path="description">Opis:</form:label>

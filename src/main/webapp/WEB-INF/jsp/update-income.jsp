@@ -38,8 +38,10 @@
             	<option value="${subCategory.getId()}" <c:if test="${subCategory.getName() == income.getSubCategory().getName()}"> selected="selected" </c:if> >${subCategory.getName()}</option> 
             </c:forEach>
 		</form:select>
+		<br/>
+		<p><form:errors class="error" path="subCategory"/></p>
 		
-		<br/><br/>
+		<br/>
 		
 		<fieldset class="form-group">
 			<form:label path="description">Opis:</form:label>
