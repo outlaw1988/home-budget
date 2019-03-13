@@ -2,16 +2,15 @@
 <%@ include file="common/navigation.jspf"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-
 <div class="container">
 
-	<h1>Dodaj wydatek</h1>
-
+	<h1>Edytuj wydatek</h1>
+	
 	<form:form method="post" modelAttribute="expenditure">
 	
 		<br/>
-	
 		<form:hidden path="id" />
+		<form:hidden path="user"/>
 		
 		<fieldset class="form-group">
 			<form:label path="value">Wartość:</form:label>
@@ -25,7 +24,7 @@
 		<select id="sel-category">
 		    <option value="">--WYBIERZ--</option>
 		    <c:forEach items="${categories}" var="category"> 
-            	<option value="${category.getId()}">${category.getName()}</option> 
+            	<option value="${category.getId()}" <c:if test="${category.getName() == expenditure.getSubCategory().getCategory().getName()}"> selected="selected" </c:if> >${category.getName()}</option> 
             </c:forEach>
 		</select>
 		
@@ -35,6 +34,9 @@
 		<br/>
 		<form:select id="sel-subcategory" path="subCategory">
 		    <option value="">--WYBIERZ--</option>
+		    <c:forEach items="${subCategories}" var="subCategory"> 
+            	<option value="${subCategory.getId()}" <c:if test="${subCategory.getName() == expenditure.getSubCategory().getName()}"> selected="selected" </c:if> >${subCategory.getName()}</option> 
+            </c:forEach>
 		</form:select>
 		<br/>
 		<p><form:errors class="error" path="subCategory"/></p>
@@ -51,7 +53,7 @@
 		
 		<fieldset class="form-group">
 			<form:label path="dateTime">Data:</form:label>
-			<fmt:formatDate value="${currentDate}" pattern="yyyy/MM/dd HH:mm:ss" var="myDate" />
+			<fmt:formatDate value="${expenditure.getDateTime()}" pattern="yyyy/MM/dd HH:mm:ss" var="myDate" />
 			<form:input style="width: 250px;" path="dateTime" class="form-control" value="${myDate}"/>
 			<form:errors path="dateTime" class="error" />
 		</fieldset>
@@ -59,7 +61,7 @@
 	
 		<br/><br/>
 		
-		<button id="add-category" type="submit" class="btn btn-success">Dodaj</button>
+		<button id="update-expenditure" type="submit" class="btn btn-success">Zatwierdź</button>
 	
 	</form:form>
 

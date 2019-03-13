@@ -4,10 +4,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.model.MonthYear;
+import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
@@ -40,6 +43,8 @@ public class IncomesController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	private Date currentDate;
 
 	@RequestMapping(value = "/incomes", method = RequestMethod.GET)
 	public String incomesList(ModelMap model) {
@@ -59,7 +64,8 @@ public class IncomesController {
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
 		model.addAttribute("income", new Income());
-		model.put("currentDate", new Date());
+		currentDate = new Date();
+		model.put("currentDate", currentDate);
 		
 		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
 		model.put("categories", categories);
@@ -68,9 +74,22 @@ public class IncomesController {
 	}
 	
 	@RequestMapping(value = "/add-income", method = RequestMethod.POST)
-	public String addIncomePost(Income income) {
+	public String addIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		if (income.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+			model.put("categories", categories);
+			model.put("currentDate", currentDate);
+			return "add-income";
+		}
+		
 		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, user);
 		
 		income.setMonthYear(monthYear);
@@ -107,6 +126,56 @@ public class IncomesController {
 		if (params.contains("yes")) {
 			incomeRepository.deleteById(incomeId);
 		}
+		
+		return "redirect:/incomes";
+	}
+	
+	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.GET)
+	public String updateIncomeGet(ModelMap model, @PathVariable(value = "incomeId") int incomeId) {
+		
+		Income income = incomeRepository.findById(incomeId);
+		
+		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("income", income);
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+		model.put("categories", categories);
+		
+		List<SubCategory> subCategories = subCategoryRepository.findByCategory(income.getSubCategory().getCategory());
+		model.put("subCategories", subCategories);
+		
+		return "update-income";
+	}
+	
+	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.POST)
+	public String updateIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
+		
+		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		if (income.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", 
+					income.getUser());
+			model.put("categories", categories);
+			
+			return "update-income";
+		}
+		
+		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, 
+				income.getUser());
+		income.setMonthYear(monthYear);
+		
+		incomeRepository.save(income);
 		
 		return "redirect:/incomes";
 	}
