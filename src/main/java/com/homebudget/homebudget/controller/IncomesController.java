@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.model.MonthYear;
+import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
@@ -107,6 +109,43 @@ public class IncomesController {
 		if (params.contains("yes")) {
 			incomeRepository.deleteById(incomeId);
 		}
+		
+		return "redirect:/incomes";
+	}
+	
+	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.GET)
+	public String updateIncomeGet(ModelMap model, @PathVariable(value = "incomeId") int incomeId) {
+		
+		Income income = incomeRepository.findById(incomeId);
+		
+		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("income", income);
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+		model.put("categories", categories);
+		
+		List<SubCategory> subCategories = subCategoryRepository.findByCategory(income.getSubCategory().getCategory());
+		model.put("subCategories", subCategories);
+		
+		return "update-income";
+	}
+	
+	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.POST)
+	public String updateIncomePost(ModelMap model, @Valid Income income) {
+		
+		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		MonthYear monthYear = Utils.checkAndAddMonthYear(income.getDateTime(), monthYearRepository, 
+				income.getUser());
+		income.setMonthYear(monthYear);
+		
+		incomeRepository.save(income);
 		
 		return "redirect:/incomes";
 	}
