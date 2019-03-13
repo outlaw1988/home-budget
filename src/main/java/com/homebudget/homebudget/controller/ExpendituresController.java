@@ -45,6 +45,8 @@ public class ExpendituresController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	private Date currentDate;
 
 	@RequestMapping(value = "/expenditures", method = RequestMethod.GET)
 	public String expendituresList(ModelMap model) {
@@ -63,7 +65,8 @@ public class ExpendituresController {
 	public String addExpenditure(ModelMap model) {
 		
 		model.addAttribute("expenditure", new Expenditure());
-		model.put("currentDate", new Date());
+		currentDate = new Date();
+		model.put("currentDate", currentDate);
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
@@ -74,9 +77,22 @@ public class ExpendituresController {
 	}
 	
 	@RequestMapping(value = "/add-expenditure", method = RequestMethod.POST)
-	public String addExpenditurePost(Expenditure expenditure) {
+	public String addExpenditurePost(ModelMap model, @Valid Expenditure expenditure, 
+			BindingResult result) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		if (expenditure.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", "Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
+			model.put("categories", categories);
+			model.put("currentDate", currentDate);
+			return "add-expenditure";
+		}
+		
 		MonthYear monthYear = Utils.checkAndAddMonthYear(expenditure.getDateTime(), monthYearRepository, 
 				user);
 		
@@ -146,6 +162,19 @@ public class ExpendituresController {
 		
 		if (!expenditure.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
 			return "forbidden";
+		}
+		
+		if (expenditure.getSubCategory() == null) {
+			result.rejectValue("subCategory", "error.subCategory", 
+					"Kategoria/podkategoria nie może być pusta");
+		}
+		
+		if (result.hasErrors()) {
+			List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", 
+					expenditure.getUser());
+			model.put("categories", categories);
+			
+			return "update-expenditure";
 		}
 		
 		MonthYear monthYear = Utils.checkAndAddMonthYear(expenditure.getDateTime(), monthYearRepository, 

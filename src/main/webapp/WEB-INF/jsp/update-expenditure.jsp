@@ -38,8 +38,10 @@
             	<option value="${subCategory.getId()}" <c:if test="${subCategory.getName() == expenditure.getSubCategory().getName()}"> selected="selected" </c:if> >${subCategory.getName()}</option> 
             </c:forEach>
 		</form:select>
+		<br/>
+		<p><form:errors class="error" path="subCategory"/></p>
 		
-		<br/><br/>
+		<br/>
 		
 		<fieldset class="form-group">
 			<form:label path="description">Opis:</form:label>
@@ -59,7 +61,7 @@
 	
 		<br/><br/>
 		
-		<button id="update-category" type="submit" class="btn btn-success">Zatwierdź</button>
+		<button id="update-expenditure" type="submit" class="btn btn-success">Zatwierdź</button>
 	
 	</form:form>
 
