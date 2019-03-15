@@ -155,9 +155,9 @@ function updateTable(tableType, month, year) {
 	var urlData = "";
 	
 	if (tableType == "incomes") {
-		urlData = "/get-incomes-table";
+		urlData = "/get-accumulated-incomes-table";
 	} else if (tableType == "expenditures") {
-		urlData = "/get-expenditures-table";
+		urlData = "/get-accumulated-expenditures-table";
 	}
 	
 	$.ajax({
