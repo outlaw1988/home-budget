@@ -1,6 +1,5 @@
 package com.homebudget.homebudget.controller;
 
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -17,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.homebudget.homebudget.model.AccumulatedItem;
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Expenditure;
 import com.homebudget.homebudget.model.Item;
@@ -64,9 +62,13 @@ public class ExpendituresController {
 		model.put("years", yearsSorted);
 		model.put("months", months);
 		
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(months.get(0), 
+				yearsSorted.get(0), user).get(0);
+		
 		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
 		
-		List<Expenditure> expenditures = expenditureRepository.findByUserOrderByDateTimeDesc(user);
+		List<Expenditure> expenditures = expenditureRepository.findByMonthYearOrderByDateTimeDesc(
+				monthYear);
 		model.put("expenditures", expenditures);
 		
 		return "expenditures";
