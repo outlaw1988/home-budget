@@ -43,8 +43,8 @@
 	    <c:forEach items="${expenditures}" var="expenditure" varStatus="loop">
 	  		<tr>
 	        	<td>
-	        		<fmt:formatDate value="${expenditure.dateTime}" pattern="yyyy-MM-dd HH:mm:ss" var="myDate" />
-	        		${myDate}
+	        		<fmt:formatDate value="${expenditure.dateTime}" pattern="yyyy-MM-dd HH:mm:ss" var="dateFormatted" />
+	        		${dateFormatted}
 	        	</td>
 	        	<td>${expenditure.subCategory.category.name}</td>
 	        	<td>${expenditure.subCategory.name}</td>
