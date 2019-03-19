@@ -42,7 +42,10 @@
 	  <tbody>
 	    <c:forEach items="${expenditures}" var="expenditure" varStatus="loop">
 	  		<tr>
-	        	<td>${expenditure.dateTime}</td>
+	        	<td>
+	        		<fmt:formatDate value="${expenditure.dateTime}" pattern="yyyy-MM-dd HH:mm:ss" var="myDate" />
+	        		${myDate}
+	        	</td>
 	        	<td>${expenditure.subCategory.category.name}</td>
 	        	<td>${expenditure.subCategory.name}</td>
 	        	<td>${expenditure.description}</td>
@@ -77,9 +80,7 @@
     });
     
     $("#sel-year").change(function(){
-    	console.log("Year has changed");
     	var year = $(this).val();
-    	console.log("Year: " + year)
     	
     	var data = {
     		"year": year
@@ -105,7 +106,6 @@
     			
     			var month = $("#sel-month").val();
     			month.selectedIndex = 0;
-    			console.log("Month: " + month);
     			
     			removeTableContent("expenditures-table");
     			updateTable(month, year);
@@ -114,11 +114,8 @@
     });
     
     $("#sel-month").change(function(){ 
-    	console.log("Month has changed...");
     	var month = $(this).val();
     	var year = $("#sel-year").val();
-    	console.log("Month: " + month);
-    	console.log("Year: " + year);
     	
     	removeTableContent("expenditures-table");
     	updateTable(month, year);
@@ -139,11 +136,6 @@
     	    url: "/get-expenditures-table",
     	    data: json,
     		success :function(result) {
-    			for(var i = 0; i < result.items.length; i++){
-    				console.log("Sub category: " + result.items[i].subCategory.name);
-    				console.log("Value: " + result.items[i].value);
-                }
-    			
     			drawTable(result);
     	    }
     	});
@@ -162,7 +154,7 @@
     		var cell5 = row.insertCell(4);
     		var cell6 = row.insertCell(5);
     		
-    		cell1.innerHTML = data.items[i].dateTime;
+    		cell1.innerHTML = $.format.date(data.items[i].dateTime, "yyyy-MM-dd HH:mm:ss");
     		cell2.innerHTML = data.items[i].subCategory.category.name;
     		cell3.innerHTML = data.items[i].subCategory.name;
     		cell4.innerHTML = data.items[i].description;

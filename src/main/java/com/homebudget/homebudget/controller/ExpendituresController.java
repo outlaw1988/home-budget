@@ -210,6 +210,7 @@ public class ExpendituresController {
 				Integer.parseInt(monthYearReq.year), user).get(0);
 		
 		List<? extends Item> expenditures = expenditureRepository.findByMonthYear(monthYear);
+//		expenditures.get(0).getDateTime().getDate();
 		return new ItemResponse((List<Item>) expenditures);
 	}
 	
