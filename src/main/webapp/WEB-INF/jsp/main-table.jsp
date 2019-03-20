@@ -89,10 +89,7 @@ $(function () {
 });
 
 $("#sel-year").change(function(){ 
-	console.log("Year has changed");
 	var year = $(this).val();
-	
-	console.log("Year: " + year);
 	
 	var data = {
 		"year": year
@@ -118,7 +115,6 @@ $("#sel-year").change(function(){
 			
 			var month = $("#sel-month").val();
 			month.selectedIndex = 0;
-			console.log("Month: " + month);
 			
 			removeTableContent("incomes-table");
 			removeTableContent("expenditures-table");
@@ -131,11 +127,8 @@ $("#sel-year").change(function(){
 });
 
 $("#sel-month").change(function(){ 
-	console.log("Month has changed...");
 	var month = $(this).val();
 	var year = $("#sel-year").val();
-	console.log("Month: " + month);
-	console.log("Year: " + year);
 	
 	removeTableContent("incomes-table");
 	removeTableContent("expenditures-table");
@@ -155,9 +148,9 @@ function updateTable(tableType, month, year) {
 	var urlData = "";
 	
 	if (tableType == "incomes") {
-		urlData = "/get-incomes-table";
+		urlData = "/get-accumulated-incomes-table";
 	} else if (tableType == "expenditures") {
-		urlData = "/get-expenditures-table";
+		urlData = "/get-accumulated-expenditures-table";
 	}
 	
 	$.ajax({
@@ -167,13 +160,6 @@ function updateTable(tableType, month, year) {
 	    url: urlData,
 	    data: json,
 		success :function(result) {
-			for(var i = 0; i < result.accumulatedItems.length; i++){
-				console.log("Subcategory: " + result.accumulatedItems[i].subCategory.name);
-				console.log("Result value: " + result.accumulatedItems[i].sumValue);
-            }
-			
-			console.log("Total sum is: " + result.sum);
-			
 			drawTable(result, tableType);
 	    }
 	});

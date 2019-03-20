@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Expenditure;
+import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
@@ -27,6 +28,8 @@ import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 import com.homebudget.homebudget.service.UserRepository;
 import com.homebudget.homebudget.utils.Utils;
+
+import static com.homebudget.homebudget.utils.Utils.*;
 
 @Controller
 public class ExpendituresController {
@@ -52,10 +55,20 @@ public class ExpendituresController {
 	public String expendituresList(ModelMap model) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
+		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
+		List<Integer> months = getMonthsSortedDescForGivenYear(monthsYears, yearsSorted.get(0));
+		
+		model.put("years", yearsSorted);
+		model.put("months", months);
+		
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(months.get(0), 
+				yearsSorted.get(0), user).get(0);
 		
 		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
 		
-		List<Expenditure> expenditures = expenditureRepository.findByUserOrderByDateTimeDesc(user);
+		List<Expenditure> expenditures = expenditureRepository.findByMonthYearOrderByDateTimeDesc(
+				monthYear);
 		model.put("expenditures", expenditures);
 		
 		return "expenditures";
@@ -187,17 +200,17 @@ public class ExpendituresController {
 		return "redirect:/expenditures";
 	}
 	
-	@RequestMapping(value = "/get-subcategories", method = RequestMethod.POST)
-	public @ResponseBody List<SubCategory> getSubCategories(@RequestBody CategoryId categoryId) {
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/get-expenditures-table", method = RequestMethod.POST)
+	public @ResponseBody ItemResponse getExpendituresTable(@RequestBody MonthYearRequest 
+																	monthYearReq) {
 		
-		Category category = categoryRepository.findById(Integer.parseInt(categoryId.categoryId));
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(Integer.parseInt(monthYearReq.month), 
+				Integer.parseInt(monthYearReq.year), user).get(0);
 		
-		return subCategoryRepository.findByCategory(category);
+		List<? extends Item> expenditures = expenditureRepository.findByMonthYear(monthYear);
+		return new ItemResponse((List<Item>) expenditures);
 	}
 	
-}
-
-//Auxiliary classes
-class CategoryId {
-	public String categoryId;
 }

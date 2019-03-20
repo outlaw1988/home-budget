@@ -1,5 +1,8 @@
 package com.homebudget.homebudget.controller;
 
+import static com.homebudget.homebudget.utils.Utils.getMonthsSortedDescForGivenYear;
+import static com.homebudget.homebudget.utils.Utils.getYearsSortedDesc;
+
 import java.util.Date;
 import java.util.List;
 
@@ -11,11 +14,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.homebudget.homebudget.model.Category;
 import com.homebudget.homebudget.model.Income;
+import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
@@ -50,9 +56,19 @@ public class IncomesController {
 	public String incomesList(ModelMap model) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
+		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
+		List<Integer> months = getMonthsSortedDescForGivenYear(monthsYears, yearsSorted.get(0));
+		
+		model.put("years", yearsSorted);
+		model.put("months", months);
+		
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(months.get(0), 
+				yearsSorted.get(0), user).get(0);
+		
 		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
 		
-		List<Income> incomes = incomeRepository.findByUserOrderByDateTimeDesc(user);
+		List<Income> incomes = incomeRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
 		model.put("incomes", incomes);
 		
 		return "incomes";
@@ -178,6 +194,19 @@ public class IncomesController {
 		incomeRepository.save(income);
 		
 		return "redirect:/incomes";
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/get-incomes-table", method = RequestMethod.POST)
+	public @ResponseBody ItemResponse getExpendituresTable(@RequestBody MonthYearRequest 
+																	monthYearReq) {
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(Integer.parseInt(monthYearReq.month), 
+				Integer.parseInt(monthYearReq.year), user).get(0);
+		
+		List<? extends Item> incomes = incomeRepository.findByMonthYear(monthYear);
+		return new ItemResponse((List<Item>) incomes);
 	}
 	
 	// get-subcategories taken from ExpendituresController

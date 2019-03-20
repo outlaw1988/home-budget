@@ -2,7 +2,6 @@ package com.homebudget.homebudget.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +25,7 @@ import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.UserRepository;
-import com.homebudget.homebudget.utils.Utils;
+import static com.homebudget.homebudget.utils.Utils.*;
 
 
 @Controller
@@ -47,7 +46,7 @@ public class MainTableController {
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
 		
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
 		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
 		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
@@ -76,16 +75,7 @@ public class MainTableController {
 		return "main-table";
 	}
 	
-	@RequestMapping(value = "/change-year", method = RequestMethod.POST)
-	public @ResponseBody List<Integer> changeYearAndGetMonths(@RequestBody Year year) {
-		
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
-		
-		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
-	}
-	
-	@RequestMapping(value = "/get-incomes-table", method = RequestMethod.POST)
+	@RequestMapping(value = "/get-accumulated-incomes-table", method = RequestMethod.POST)
 	public @ResponseBody AccumulatedItemResponse getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
 		
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
@@ -95,7 +85,7 @@ public class MainTableController {
 		return new AccumulatedItemResponse(accumulatedItems, sum);
 	}
 	
-	@RequestMapping(value = "/get-expenditures-table", method = RequestMethod.POST)
+	@RequestMapping(value = "/get-accumulated-expenditures-table", method = RequestMethod.POST)
 	public @ResponseBody AccumulatedItemResponse getExpendituresTable(@RequestBody MonthYearRequest 
 																	monthYearReq) {
 		
@@ -107,7 +97,7 @@ public class MainTableController {
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
 		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
 		List<? extends Item> items = null;
 		
@@ -165,48 +155,9 @@ public class MainTableController {
 		return accumulatedItems;
 	}
 	
-	private List<Integer> getYearsSortedDesc(List<MonthYear> monthsYears) {
-		
-		Set<Integer> years = new HashSet<>();
-		
-		for (MonthYear monthYear : monthsYears) {
-			years.add(monthYear.getYear());
-		}
-		
-		List<Integer> yearsSorted = new ArrayList<Integer>(years);
-		Collections.sort(yearsSorted, Collections.reverseOrder());
-		
-		return yearsSorted;
-	}
-	
-	private List<Integer> getMonthsSortedDescForGivenYear(List<MonthYear> monthsYears, Integer year) {
-		
-		List<Integer> months = new ArrayList<Integer>();
-		
-		for (MonthYear monthYear : monthsYears) {
-			if (monthYear.getYear() == year) {
-				months.add(monthYear.getMonth());
-			}
-		}
-		
-		Collections.sort(months, Collections.reverseOrder());
-		
-		return months;
-	}
 }
 
 // Auxiliary classes
-
-class Year {
-	public String year;
-}
-
-
-class MonthYearRequest {
-	public String month;
-	public String year;
-}
-
 
 class AccumulatedItemResponse {
 	
