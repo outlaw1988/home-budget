@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.homebudget.homebudget.model.Role;
+import com.homebudget.homebudget.model.Authorities;
 import com.homebudget.homebudget.model.User;
 
 
@@ -43,7 +43,7 @@ public class UserService {
         User userReturned = userRepository.save(user);
         
         if (!updateMode) {
-        	Role role = new Role();
+        	Authorities role = new Authorities();
             role.setUsername(userReturned.getUsername());
             role.setAuthority("ROLE_USER");
             
