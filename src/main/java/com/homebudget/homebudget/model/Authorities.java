@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "authorities")
+public class Authorities {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -22,11 +22,11 @@ public class Role {
 	@Column(name = "authority")
 	private String authority;
 	
-	public Role() {
+	public Authorities() {
 		//empty
 	}
 
-	public Role(String username, String authority) {
+	public Authorities(String username, String authority) {
 		super();
 		this.username = username;
 		this.authority = authority;

@@ -86,7 +86,7 @@ public class AuthenticationController {
 	}
 	
 	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login(@RequestParam(name="error",required=false) String error, 
+	public String login(@RequestParam(name="error", required=false) String error, 
 						ModelMap model) {
 		
 		if(error != null) {

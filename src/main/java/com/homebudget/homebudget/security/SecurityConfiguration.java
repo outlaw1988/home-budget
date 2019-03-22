@@ -24,12 +24,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-
-      auth.jdbcAuthentication().dataSource(dataSource)
-          .usersByUsernameQuery("select username, password, enabled"
-              + " from user where username=?")
-          .authoritiesByUsernameQuery("select username, authority "
-              + "from role where username=?")
+    	
+        auth.jdbcAuthentication()
+      	  .dataSource(dataSource)
+          .usersByUsernameQuery("SELECT username, password, enabled"
+              + " FROM user WHERE username=?")
+//          .authoritiesByUsernameQuery("SELECT username, authority"
+//              + " FROM role WHERE username=?")
           .passwordEncoder(new BCryptPasswordEncoder());
     }
 	
@@ -66,7 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-	    web.ignoring().antMatchers("/css/**");
+	    web.ignoring().antMatchers("/css/**", "/jquery/**");
 	}
 	
 	@Bean
