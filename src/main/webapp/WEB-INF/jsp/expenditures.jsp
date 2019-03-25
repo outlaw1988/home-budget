@@ -29,6 +29,12 @@
 	<br/><br/>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
+		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
+  		<col width="25%">
+  		<col width="10%">
+  		<col width="5%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Data</th>
@@ -158,7 +164,7 @@
     		cell2.innerHTML = data.items[i].subCategory.category.name;
     		cell3.innerHTML = data.items[i].subCategory.name;
     		cell4.innerHTML = data.items[i].description;
-    		cell5.innerHTML = data.items[i].value;
+    		cell5.innerHTML = data.items[i].value.toFixed(2);
     		cell6.innerHTML = "<div class='dropdown' onclick='dropDown(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-" + i + "' class='dropdown-content'> <a href='update-expenditure-" + data.items[i].id + "'>Edytuj</a> <a href='remove-expenditure-" + data.items[i].id + "'>Usuń</a> </div> </div>";
     	}
     	

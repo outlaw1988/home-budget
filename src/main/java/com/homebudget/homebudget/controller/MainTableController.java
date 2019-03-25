@@ -43,6 +43,9 @@ public class MainTableController {
 	@Autowired
 	UserRepository userRepository;
 	
+	BigDecimal incomesSum;
+	BigDecimal expendituresSum;
+	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
 		
@@ -63,14 +66,19 @@ public class MainTableController {
 													yearsSorted.get(0), "income");
 		
 		model.put("incomes", accumulatedIncomes);
-		model.put("incomesSum", sumUp(accumulatedIncomes));
+		incomesSum = sumUp(accumulatedIncomes);
+		model.put("incomesSum", incomesSum);
 		
 		// Expenditures
 		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(months.get(0), 
 													yearsSorted.get(0), "expenditure");
 		
 		model.put("expenditures", accumulatedExpenditures);
-		model.put("expendituresSum", sumUp(accumulatedExpenditures));
+		expendituresSum = sumUp(accumulatedExpenditures);
+		model.put("expendituresSum", expendituresSum);
+		
+		BigDecimal diff = incomesSum.subtract(expendituresSum);
+		model.put("diff", diff);
 		
 		return "main-table";
 	}
@@ -80,9 +88,9 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 				  								Integer.parseInt(monthYearReq.year), "income");
-		BigDecimal sum = sumUp(accumulatedItems);
+		this.incomesSum = sumUp(accumulatedItems);
 		
-		return new AccumulatedItemResponse(accumulatedItems, sum);
+		return new AccumulatedItemResponse(accumulatedItems, incomesSum);
 	}
 	
 	@RequestMapping(value = "/get-accumulated-expenditures-table", method = RequestMethod.POST)
@@ -91,9 +99,14 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 												Integer.parseInt(monthYearReq.year), "expenditure");
-		BigDecimal sum = sumUp(accumulatedItems);
+		this.expendituresSum = sumUp(accumulatedItems);
 
-		return new AccumulatedItemResponse(accumulatedItems, sum);
+		return new AccumulatedItemResponse(accumulatedItems, expendituresSum);
+	}
+	
+	@RequestMapping(value = "/get-summary-table", method = RequestMethod.POST)
+	public @ResponseBody SummaryResponse getSummary() {
+		return new SummaryResponse(incomesSum.subtract(expendituresSum));
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
@@ -168,6 +181,17 @@ class AccumulatedItemResponse {
 		super();
 		this.accumulatedItems = accumulatedItems;
 		this.sum = sum;
+	}
+	
+}
+
+class SummaryResponse {
+	
+	public BigDecimal diffValue;
+	
+	public SummaryResponse(BigDecimal diffValue) {
+		super();
+		this.diffValue = diffValue;
 	}
 	
 }

@@ -27,6 +27,9 @@
 	<h3>Dochody</h3>
 	
 	<table id="incomes-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -45,7 +48,8 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${incomesSum}"/></b></td>
+	  		<%-- <td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${incomesSum}"/></b></td> --%>
+	  		<td><b>${incomesSum}</b></td>
 	  	</tr>
 	  </tbody>
 	</table>
@@ -53,6 +57,9 @@
 	<h3>Wydatki</h3>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -71,9 +78,31 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${expendituresSum}"/></b></td>
+	  		<td><b>${expendituresSum}</b></td>
 	  	</tr>
 	  </tbody>
+	</table>
+	
+	<h3>Podsumowanie</h3>
+	
+	<table id="summary-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
+		<thead>
+			<tr>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td></td>
+				<td><b>Nadwyżka:</b></td>
+				<td><b>${diff}</b></td>
+			</tr>
+		</tbody>
 	</table>
 
 </div>
@@ -99,6 +128,7 @@ $("#sel-year").change(function(){
 	
 	$.ajax({
 		type: "POST",
+		async: false,
 		contentType: "application/json; charset=utf-8",
 	    dataType : 'json',
 	    url: "/change-year",
@@ -118,9 +148,11 @@ $("#sel-year").change(function(){
 			
 			removeTableContent("incomes-table");
 			removeTableContent("expenditures-table");
+			removeTableContent("summary-table");
 			
 			updateTable("incomes", month, year);
 			updateTable("expenditures", month, year);
+			updateSummaryTable();
 	    }
 	});
 	
@@ -132,9 +164,11 @@ $("#sel-month").change(function(){
 	
 	removeTableContent("incomes-table");
 	removeTableContent("expenditures-table");
+	removeTableContent("summary-table");
 	
 	updateTable("incomes", month, year);
 	updateTable("expenditures", month, year);
+	updateSummaryTable();
 });
 
 function updateTable(tableType, month, year) {
@@ -155,6 +189,7 @@ function updateTable(tableType, month, year) {
 	
 	$.ajax({
 		type: "POST",
+		async: false,
 		contentType: "application/json; charset=utf-8",
 	    dataType : 'json',
 	    url: urlData,
@@ -184,7 +219,7 @@ function drawTable(data, tableType) {
 		var cell3 = row.insertCell(2);
 		cell1.innerHTML = data.accumulatedItems[i].subCategory.category.name;
 		cell2.innerHTML = data.accumulatedItems[i].subCategory.name;
-		cell3.innerHTML = data.accumulatedItems[i].sumValue;
+		cell3.innerHTML = data.accumulatedItems[i].sumValue.toFixed(2);
 	}
 	
 	var row = table.insertRow(-1);
@@ -193,17 +228,45 @@ function drawTable(data, tableType) {
 	var cell3 = row.insertCell(2);
 	cell1.innerHTML = "";
 	cell2.innerHTML = "<b>Suma brutto:</b>";
-	cell3.innerHTML = "<b>" + data.sum + "</b>";
+	cell3.innerHTML = "<b>" + data.sum.toFixed(2) + "</b>";
 	
 }
 
-function removeTableContent(tableName) {
-	var table = document.getElementById(tableName);
+function updateSummaryTable() {
+	$.ajax({
+		type: "POST",
+		async: false,
+		contentType: "application/json; charset=utf-8",
+	    dataType : 'json',
+	    url: "/get-summary-table",
+		success :function(result) {
+			var table = document.getElementById("summary-table").getElementsByTagName('tbody')[0];
+			var row = table.insertRow(-1);
+			
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			
+			cell1.innerHTML = "";
+			cell2.innerHTML = "<b>Nadwyżka</b>";
+			cell3.innerHTML = "<b>" + result.diffValue.toFixed(2) + "</b>";
+	    }
+	});
+}
+
+function removeTableContent(tableId) {
+	var table = document.getElementById(tableId);
 	var rowCount = table.rows.length;
 	for (var x = rowCount - 1; x > 0; x--) {
 		table.deleteRow(x);
 	}
 	
+}
+
+function convertNumberTwoDecimalPlaces(number) {
+	var num = result.diffValue;
+	var n = num.toFixed(2);
+	document.write(n);
 }
 
 </script>

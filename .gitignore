@@ -26,3 +26,10 @@ mvnw.cmd
 /dist/
 /nbdist/
 /.nb-gradle/
+
+src/main/resources/dblocalhost.properties
+src/main/resources/dbremote.properties
+src/main/resources/mysql_connection_remote_db_homebudget.txt
+src/main/resources/schema.sql
+src/main/resources/test_platform_info.txt
+
