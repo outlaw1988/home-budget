@@ -89,7 +89,6 @@ public class MainTableController {
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 				  								Integer.parseInt(monthYearReq.year), "income");
 		this.incomesSum = sumUp(accumulatedItems);
-		System.out.println("Incomes sum from getAccumulated: " + this.incomesSum);
 		
 		return new AccumulatedItemResponse(accumulatedItems, incomesSum);
 	}
@@ -101,15 +100,12 @@ public class MainTableController {
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
 												Integer.parseInt(monthYearReq.year), "expenditure");
 		this.expendituresSum = sumUp(accumulatedItems);
-		System.out.println("Expenditures sum from getAccumulated: " + this.expendituresSum);
 
 		return new AccumulatedItemResponse(accumulatedItems, expendituresSum);
 	}
 	
 	@RequestMapping(value = "/get-summary-table", method = RequestMethod.POST)
 	public @ResponseBody SummaryResponse getSummary() {
-		System.out.println("Incomes sum from getSummary: " + incomesSum);
-		System.out.println("Expenditures sum from getSummary: " + expendituresSum);
 		return new SummaryResponse(incomesSum.subtract(expendituresSum));
 	}
 	

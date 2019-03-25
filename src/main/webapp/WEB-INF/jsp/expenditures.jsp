@@ -29,6 +29,12 @@
 	<br/><br/>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
+		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
+  		<col width="25%">
+  		<col width="10%">
+  		<col width="5%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Data</th>

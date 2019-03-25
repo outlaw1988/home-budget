@@ -27,6 +27,9 @@
 	<h3>Dochody</h3>
 	
 	<table id="incomes-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -54,6 +57,9 @@
 	<h3>Wydatki</h3>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
@@ -72,7 +78,6 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<%-- <td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${expendituresSum}"/></b></td> --%>
 	  		<td><b>${expendituresSum}</b></td>
 	  	</tr>
 	  </tbody>
@@ -81,14 +86,19 @@
 	<h3>Podsumowanie</h3>
 	
 	<table id="summary-table" class="table table-striped table-hover">
+		<col width="30%">
+  		<col width="30%">
+  		<col width="30%">
 		<thead>
 			<tr>
+				<td></td>
 				<td></td>
 				<td></td>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
+				<td></td>
 				<td><b>Nadwyżka:</b></td>
 				<td><b>${diff}</b></td>
 			</tr>
@@ -235,11 +245,11 @@ function updateSummaryTable() {
 			
 			var cell1 = row.insertCell(0);
 			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
 			
-			cell1.innerHTML = "<b>Nadwyżka</b>";
-			//var num = result.diffValue;
-			//var n = num.toFixed(2);
-			cell2.innerHTML = "<b>" + result.diffValue.toFixed(2) + "</b>";
+			cell1.innerHTML = "";
+			cell2.innerHTML = "<b>Nadwyżka</b>";
+			cell3.innerHTML = "<b>" + result.diffValue.toFixed(2) + "</b>";
 	    }
 	});
 }
