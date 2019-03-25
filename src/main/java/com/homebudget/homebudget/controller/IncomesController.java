@@ -205,10 +205,8 @@ public class IncomesController {
 		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(Integer.parseInt(monthYearReq.month), 
 				Integer.parseInt(monthYearReq.year), user).get(0);
 		
-		List<? extends Item> incomes = incomeRepository.findByMonthYear(monthYear);
+		List<? extends Item> incomes = incomeRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
 		return new ItemResponse((List<Item>) incomes);
 	}
-	
-	// get-subcategories taken from ExpendituresController
 
 }
