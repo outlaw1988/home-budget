@@ -8,7 +8,10 @@
     <a class="navbar-brand" href="/index">Domowy budżet</a>
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item">
-        <a class="nav-link" href="/add-category">Dodaj kategorię</a>
+        <a class="nav-link" href="/categories">Kategorie</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="add-category">Dodaj kategorie</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="/expenditures">Wydatki</a>

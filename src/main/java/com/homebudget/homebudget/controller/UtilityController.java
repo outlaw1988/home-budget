@@ -21,6 +21,7 @@ import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Type;
 
 @Controller
 public class UtilityController {
@@ -36,6 +37,21 @@ public class UtilityController {
 	
 	@Autowired
 	MonthYearRepository monthYearRepository;
+	
+	@RequestMapping(value = "/change-type-get-categories", method = RequestMethod.POST)
+	public @ResponseBody List<Category> getCategoriesByType(@RequestBody TypeRequest type) {
+
+		Type enumType = null;
+		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
+		
+		if (type.type.equals("income")) {
+			enumType = Type.INCOME;
+		} else if (type.type.equals("expenditure")) {
+			enumType = Type.EXPENDITURE;
+		}
+		
+		return categoryRepository.findByTypeAndUserOrderByName(enumType, user);
+	}
 
 	@RequestMapping(value = "/get-subcategories", method = RequestMethod.POST)
 	public @ResponseBody List<SubCategory> getSubCategories(@RequestBody CategoryId categoryId) {
@@ -49,14 +65,20 @@ public class UtilityController {
 	public @ResponseBody List<Integer> changeYearAndGetMonths(@RequestBody Year year) {
 		
 		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
-		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
+		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		return getMonthsSortedDescForGivenYear(monthsYears, Integer.parseInt(year.year));
 	}
 	
 }
 
 //Auxiliary classes
+
+// Request classes
+class TypeRequest {
+	public String type;
+}
+
 class CategoryId {
 	public String categoryId;
 }
@@ -70,6 +92,7 @@ class MonthYearRequest {
 	public String year;
 }
 
+// Response classes
 class ItemResponse {
 	
 	public List<Item> items;

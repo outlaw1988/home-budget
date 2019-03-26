@@ -13,8 +13,8 @@
 		<form:label path="type">Typ:</form:label>
 		<br/>
 		<form:select path="type">
-			<option value="wydatek">Wydatek</option>
-			<option value="dochód">Dochód</option>
+			<option value="EXPENDITURE">Wydatek</option>
+			<option value="INCOME">Dochód</option>
 		</form:select>
 	
 		<br/><br/>

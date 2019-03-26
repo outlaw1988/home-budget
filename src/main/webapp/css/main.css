@@ -1,5 +1,15 @@
 h1 {
-	text-align:center;
+	text-align: center;
+}
+
+.table-header {
+	text-align: center;
+}
+
+.category-table {
+	width: 50%;
+	align: center;
+	margin: 0 auto;
 }
 
 .error {

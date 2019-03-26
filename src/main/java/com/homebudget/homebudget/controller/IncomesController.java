@@ -30,6 +30,7 @@ import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Type;
 import com.homebudget.homebudget.utils.Utils;
 
 @Controller
@@ -83,7 +84,8 @@ public class IncomesController {
 		currentDate = new Date();
 		model.put("currentDate", currentDate);
 		
-		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, 
+																					user);
 		model.put("categories", categories);
 		
 		return "add-income";
@@ -100,7 +102,8 @@ public class IncomesController {
 		}
 		
 		if (result.hasErrors()) {
-			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+			List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, 
+																						user);
 			model.put("categories", categories);
 			model.put("currentDate", currentDate);
 			return "add-income";
@@ -158,7 +161,7 @@ public class IncomesController {
 		model.addAttribute("income", income);
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-		List<Category> categories = categoryRepository.findByTypeAndUser("dochód", user);
+		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, user);
 		model.put("categories", categories);
 		
 		List<SubCategory> subCategories = subCategoryRepository.findByCategory(income.getSubCategory().getCategory());
@@ -180,7 +183,7 @@ public class IncomesController {
 		}
 		
 		if (result.hasErrors()) {
-			List<Category> categories = categoryRepository.findByTypeAndUser("dochód", 
+			List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, 
 					income.getUser());
 			model.put("categories", categories);
 			
