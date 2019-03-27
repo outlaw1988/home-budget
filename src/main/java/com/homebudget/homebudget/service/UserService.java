@@ -1,5 +1,6 @@
 package com.homebudget.homebudget.service;
 
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,15 +41,16 @@ public class UserService {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         user.setPasswordConfirm(new BCryptPasswordEncoder().encode(user.getPasswordConfirm()));
         user.setEnable(1);
+        user.setRoles(new HashSet<Authorities>(roleRepository.findAll()));
         User userReturned = userRepository.save(user);
         
-        if (!updateMode) {
-        	Authorities role = new Authorities();
-            role.setUsername(userReturned.getUsername());
-            role.setAuthority("ROLE_USER");
-            
-            roleRepository.save(role);
-        }
+//        if (!updateMode) {
+//        	Authorities role = new Authorities();
+////            role.setUsername(userReturned.getUsername());
+////            role.setAuthority("ROLE_USER");
+//            
+//            roleRepository.save(role);
+//        }
         
     }
     

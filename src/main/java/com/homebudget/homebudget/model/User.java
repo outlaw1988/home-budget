@@ -1,11 +1,15 @@
 package com.homebudget.homebudget.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
@@ -33,6 +37,7 @@ public class User {
     
     @Column(name = "password_confirm")
     @NotNull
+    @Transient
     private String passwordConfirm;
     
     @Column(name = "enabled")
@@ -40,6 +45,9 @@ public class User {
     
     @Column(name = "reset_token")
 	private String resetToken;
+    
+    @ManyToMany
+    private Set<Authorities> roles;
     
     public User() {
     	// empty
@@ -106,6 +114,14 @@ public class User {
 	public void setResetToken(String resetToken) {
 		this.resetToken = resetToken;
 	}
-    
-    
+
+	public Set<Authorities> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(Set<Authorities> roles) {
+		this.roles = roles;
+	}
+
+	
 }

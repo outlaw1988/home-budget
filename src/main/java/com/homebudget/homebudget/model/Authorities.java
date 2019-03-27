@@ -1,10 +1,13 @@
 package com.homebudget.homebudget.model;
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -16,20 +19,14 @@ public class Authorities {
     @Column(name = "role_id")
     private int id;
 	
-	@Column(name = "username")
-	private String username;
+	@ManyToMany(mappedBy = "roles")
+    private Set<User> users;
 	
-	@Column(name = "authority")
-	private String authority;
+	@Column(name = "name")
+	private String name;
 	
 	public Authorities() {
 		//empty
-	}
-
-	public Authorities(String username, String authority) {
-		super();
-		this.username = username;
-		this.authority = authority;
 	}
 
 	public int getId() {
@@ -40,22 +37,21 @@ public class Authorities {
 		this.id = id;
 	}
 
-	public String getUsername() {
-		return username;
+	public Set<User> getUsers() {
+		return users;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
-	public String getAuthority() {
-		return authority;
+	public String getName() {
+		return name;
 	}
 
-	public void setAuthority(String authority) {
-		this.authority = authority;
+	public void setName(String name) {
+		this.name = name;
 	}
-	
-	
+
 	
 }
