@@ -166,7 +166,8 @@ public class ExpendituresController {
 		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, user);
 		model.put("categories", categories);
 		
-		List<SubCategory> subCategories = subCategoryRepository.findByCategory(expenditure.getSubCategory().getCategory());
+		List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(
+											expenditure.getSubCategory().getCategory());
 		model.put("subCategories", subCategories);
 		
 		return "update-expenditure";

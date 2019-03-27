@@ -40,3 +40,16 @@ h1 {
     height: 20px;
     /* background: #0000ff; */
 }
+
+#categories-table td:hover {
+    cursor: pointer;
+}
+
+#sub-categories-table td:hover {
+    cursor: pointer;
+}
+
+.highlight { 
+	background-color: red !important;
+	color: #fff;
+}

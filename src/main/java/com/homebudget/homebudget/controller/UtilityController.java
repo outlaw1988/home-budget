@@ -58,7 +58,7 @@ public class UtilityController {
 		
 		Category category = categoryRepository.findById(Integer.parseInt(categoryId.categoryId));
 		
-		return subCategoryRepository.findByCategory(category);
+		return subCategoryRepository.findByCategoryOrderByName(category);
 	}
 	
 	@RequestMapping(value = "/change-year", method = RequestMethod.POST)

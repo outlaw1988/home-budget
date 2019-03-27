@@ -164,7 +164,8 @@ public class IncomesController {
 		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, user);
 		model.put("categories", categories);
 		
-		List<SubCategory> subCategories = subCategoryRepository.findByCategory(income.getSubCategory().getCategory());
+		List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(
+											income.getSubCategory().getCategory());
 		model.put("subCategories", subCategories);
 		
 		return "update-income";
