@@ -52,7 +52,7 @@ public class ForgotPasswordController {
 		User user = users.get(0);
 		user.setResetToken(UUID.randomUUID().toString());
 		
-		userService.saveUser(user, true);
+		userService.saveUser(user);
 		
 		// Email message
 		SimpleMailMessage passwordResetEmail = new SimpleMailMessage();
@@ -102,9 +102,8 @@ public class ForgotPasswordController {
 			}
 			
 			user.setPassword(password);
-			user.setPasswordConfirm(passwordConfirm);
 			
-	        userService.saveUser(user, true);
+	        userService.saveUserAndSet(user);
 	        
 	        model.put("successMessage", "Hasło zostało poprawnie zmienione");
 	        return "reset-password";
