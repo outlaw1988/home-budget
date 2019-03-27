@@ -30,8 +30,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
           .usersByUsernameQuery("SELECT username, password, 'true' as enabled"
               + " FROM user WHERE username=?")
           .authoritiesByUsernameQuery("SELECT username, authority"
-              + " FROM authorities WHERE username=?")
-          .passwordEncoder(new BCryptPasswordEncoder());
+              + " FROM authorities WHERE username=?");
+          //.passwordEncoder(new BCryptPasswordEncoder());
     }
 	
 	@Override
