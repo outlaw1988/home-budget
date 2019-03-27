@@ -25,6 +25,7 @@ import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Type;
 import static com.homebudget.homebudget.utils.Utils.*;
 
 
@@ -157,10 +158,9 @@ public class MainTableController {
 			}
 			
 			if (type.equals("income")) {
-				accumulatedItems.add(new AccumulatedItem(subCategory, sum, AccumulatedItem.Type.INCOME));
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.INCOME));
 			} else if (type.equals("expenditure")) {
-				accumulatedItems.add(new AccumulatedItem(subCategory, sum, 
-															AccumulatedItem.Type.EXPENDITURE));
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.EXPENDITURE));
 			}
 			
 		}

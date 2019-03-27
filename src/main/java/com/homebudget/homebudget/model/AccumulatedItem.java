@@ -1,6 +1,7 @@
 package com.homebudget.homebudget.model;
 
 import java.math.BigDecimal;
+import com.homebudget.homebudget.utils.Type;
 
 public class AccumulatedItem {
 	
@@ -41,10 +42,6 @@ public class AccumulatedItem {
 	@Override
 	public String toString() {
 		return "AccumulatedIncome [subCategory=" + subCategory + ", sumValue=" + sumValue + "]";
-	}
-	
-	public enum Type {
-		EXPENDITURE, INCOME;
 	}
 	
 }

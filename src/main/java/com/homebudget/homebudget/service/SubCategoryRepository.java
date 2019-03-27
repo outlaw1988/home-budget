@@ -9,6 +9,6 @@ import com.homebudget.homebudget.model.SubCategory;
 
 public interface SubCategoryRepository extends JpaRepository<SubCategory, Integer> {
 
-	List<SubCategory> findByCategory(Category category);
+	List<SubCategory> findByCategoryOrderByName(Category category);
 	
 }

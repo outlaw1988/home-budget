@@ -2,12 +2,15 @@ package com.homebudget.homebudget.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import com.homebudget.homebudget.utils.Type;
 
 @Entity
 @Table(name = "category")
@@ -18,7 +21,8 @@ public class Category {
 	private int id;
 	
 	@Column(name = "type")
-	private String type;
+	@Enumerated(EnumType.STRING)
+	private Type type;
 	
 	@Column(name = "name")
 	@NotNull
@@ -28,7 +32,7 @@ public class Category {
 	private User user;
 	
 	public Category() {
-		
+		// empty
 	}
 
 	public int getId() {
@@ -39,11 +43,11 @@ public class Category {
 		this.id = id;
 	}
 
-	public String getType() {
+	public Type getType() {
 		return type;
 	}
 
-	public void setType(String type) {
+	public void setType(Type type) {
 		this.type = type;
 	}
 

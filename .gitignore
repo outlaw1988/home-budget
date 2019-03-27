@@ -32,4 +32,6 @@ src/main/resources/dbremote.properties
 src/main/resources/mysql_connection_remote_db_homebudget.txt
 src/main/resources/schema.sql
 src/main/resources/test_platform_info.txt
+src/main/resources/sql_commands.txt
+
 

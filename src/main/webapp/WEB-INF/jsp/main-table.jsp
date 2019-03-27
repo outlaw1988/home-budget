@@ -133,7 +133,7 @@ $("#sel-year").change(function(){
 	    dataType : 'json',
 	    url: "/change-year",
 	    data: json,
-		success :function(result) {
+		success: function(result) {
 	    	
 			var slctMonth = $("#sel-month"); 
 			slctMonth.empty();
@@ -260,7 +260,6 @@ function removeTableContent(tableId) {
 	for (var x = rowCount - 1; x > 0; x--) {
 		table.deleteRow(x);
 	}
-	
 }
 
 function convertNumberTwoDecimalPlaces(number) {

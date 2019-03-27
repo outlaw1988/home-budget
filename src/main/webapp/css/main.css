@@ -1,5 +1,15 @@
 h1 {
-	text-align:center;
+	text-align: center;
+}
+
+.table-header {
+	text-align: center;
+}
+
+.category-table {
+	width: 50%;
+	align: center;
+	margin: 0 auto;
 }
 
 .error {
@@ -29,4 +39,17 @@ h1 {
     width: 20px;
     height: 20px;
     /* background: #0000ff; */
+}
+
+#categories-table td:hover {
+    cursor: pointer;
+}
+
+#sub-categories-table td:hover {
+    cursor: pointer;
+}
+
+.highlight { 
+	background-color: red !important;
+	color: #fff;
 }

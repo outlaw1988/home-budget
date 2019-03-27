@@ -18,6 +18,7 @@ import com.homebudget.homebudget.service.CategoryRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 import com.homebudget.homebudget.service.UserRepository;
 import com.homebudget.homebudget.utils.Utils;
+import com.homebudget.homebudget.utils.Type;
 
 @Controller
 public class CategoryController {
@@ -30,7 +31,38 @@ public class CategoryController {
 	
 	@Autowired
 	UserRepository userRepository;
+	
+	@RequestMapping(value = "/categories", method = RequestMethod.GET)
+	public String categories(ModelMap model) {
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, user);
+		model.put("categories", categories);
+		
+		List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(categories.get(0));
+		model.put("subCategories", subCategories);
+		
+		return "categories";
+	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+////////////////////////////////OLD
+	
 	@RequestMapping(value = {"/add-category"}, method = RequestMethod.GET)
 	public String addCategory(ModelMap model) {
 		

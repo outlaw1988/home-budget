@@ -27,6 +27,7 @@ import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
 import com.homebudget.homebudget.service.SubCategoryRepository;
 import com.homebudget.homebudget.service.UserRepository;
+import com.homebudget.homebudget.utils.Type;
 import com.homebudget.homebudget.utils.Utils;
 
 import static com.homebudget.homebudget.utils.Utils.*;
@@ -83,7 +84,7 @@ public class ExpendituresController {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
-		List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
+		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, user);
 		model.put("categories", categories);
 		
 		return "add-expenditure";
@@ -101,7 +102,8 @@ public class ExpendituresController {
 		}
 		
 		if (result.hasErrors()) {
-			List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
+			List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, 
+																						user);
 			model.put("categories", categories);
 			model.put("currentDate", currentDate);
 			return "add-expenditure";
@@ -161,10 +163,11 @@ public class ExpendituresController {
 		model.addAttribute("expenditure", expenditure);
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-		List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", user);
+		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, user);
 		model.put("categories", categories);
 		
-		List<SubCategory> subCategories = subCategoryRepository.findByCategory(expenditure.getSubCategory().getCategory());
+		List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(
+											expenditure.getSubCategory().getCategory());
 		model.put("subCategories", subCategories);
 		
 		return "update-expenditure";
@@ -184,8 +187,8 @@ public class ExpendituresController {
 		}
 		
 		if (result.hasErrors()) {
-			List<Category> categories = categoryRepository.findByTypeAndUser("wydatek", 
-					expenditure.getUser());
+			List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, 
+																				expenditure.getUser());
 			model.put("categories", categories);
 			
 			return "update-expenditure";
