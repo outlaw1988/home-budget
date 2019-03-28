@@ -100,6 +100,40 @@ public class CategoryController {
 		return "redirect:/categories";
 	}
 	
+	@RequestMapping(value = "/remove-subcategory-{subCategoryId}", method = RequestMethod.GET)
+	public String removeSubCategoryGet(ModelMap model, 
+			@PathVariable(value = "subCategoryId") int subCategoryId) {
+		
+		SubCategory subCategory = subCategoryRepository.findById(subCategoryId);
+		
+		if (!subCategory.getCategory().getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.put("isInUse", isSubCategoryInUse(subCategory));
+		
+		return "remove-subcategory";
+	}
+	
+	@RequestMapping(value = "/remove-subcategory-{subCategoryId}", method = RequestMethod.POST)
+	public String removeSubCategoryPost(HttpServletRequest request, 
+			@PathVariable(value = "subCategoryId") int subCategoryId) {
+		
+		SubCategory subCategory = subCategoryRepository.findById(subCategoryId);
+		Set<String> params = request.getParameterMap().keySet();
+		
+		if (!subCategory.getCategory().getUser().getUsername().equals(Utils.getLoggedInUserName()) || 
+				isSubCategoryInUse(subCategory)) {
+			return "forbidden";
+		}
+		
+		if (params.contains("yes")) {
+			subCategoryRepository.delete(subCategory);
+		}
+		
+		return "redirect:/categories";
+	}
+	
 	private boolean areSubCategoriesInUse(List<SubCategory> subCategories) {
 		
 		for (SubCategory subCategory : subCategories) {
