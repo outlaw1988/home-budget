@@ -188,7 +188,7 @@ function updateTable(tableId, data) {
 		if (tableId == "categories-table") {
 			cell3.innerHTML = "<div class='dropdown' onclick='dropDownCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-category-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
 		} else if (tableId == "sub-categories-table") {
-			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
+			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-subcategory-" + data[i].id + "'>Usuń</a> </div> </div>";
 		}
 		
 	}

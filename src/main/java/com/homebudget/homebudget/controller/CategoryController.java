@@ -39,8 +39,10 @@ public class CategoryController {
 		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.EXPENDITURE, user);
 		model.put("categories", categories);
 		
-		List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(categories.get(0));
-		model.put("subCategories", subCategories);
+		if (categories.size() > 0) {
+			List<SubCategory> subCategories = subCategoryRepository.findByCategoryOrderByName(categories.get(0));
+			model.put("subCategories", subCategories);
+		}
 		
 		return "categories";
 	}
