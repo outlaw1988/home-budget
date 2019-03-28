@@ -47,6 +47,12 @@
 	
 	<br/>
 	
+	<div style="text-align:center;">
+		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-category">Dodaj kategorię</a>
+	</div>
+	
+	<br/>
+	
 	<table id="sub-categories-table" class="table table-striped category-table">
 		<thead>
 			<tr>
@@ -72,6 +78,12 @@
 			</c:forEach>
 		</tbody>
 	</table>
+	
+	<br/>
+	
+	<div style="text-align:center;">
+		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-subcategory">Dodaj podkategorię</a>
+	</div>
 
 </div>
 
@@ -98,9 +110,6 @@ function highlightFirstRowAndGetSubcategories() {
 	
 	if (firstRow.length != 0) {
 		var subCategoriesData = getSubcategories(firstRow.find('td').html());
-		for (var i = 0; i < subCategoriesData.length; i++) {
-			console.log(subCategoriesData[i]);
-		}
 		removeTableContent("sub-categories-table");
 		updateTable("sub-categories-table", subCategoriesData);
 	} else {
@@ -118,11 +127,7 @@ $("#categories-table > tbody").delegate('tr', 'click', function() {
 
 $("#categories-table > tbody").delegate('tr', 'click', function() {
 	var categoryId = $(this).find('td').html();
-	console.log("Row clicked, category is: " + categoryId);
 	var subCategoriesData = getSubcategories(categoryId);
-	for (var i = 0; i < subCategoriesData.length; i++) {
-		console.log(subCategoriesData[i]);
-	}
 	removeTableContent("sub-categories-table");
 	updateTable("sub-categories-table", subCategoriesData);
 });

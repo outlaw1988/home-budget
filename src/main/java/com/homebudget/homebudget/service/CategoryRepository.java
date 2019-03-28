@@ -13,6 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
 	List<Category> findByTypeAndUserOrderByName(Type type, User user);
 	List<Category> findByUser(User user);
 	List<Category> findByUserOrderByName(User user);
+	List<Category> findByUserAndNameAndType(User user, String name, Type type);
 	Category findById(int id);
 	
 }

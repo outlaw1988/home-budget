@@ -134,8 +134,39 @@ public class CategoryController {
 		return "redirect:/categories";
 	}
 	
-	private boolean areSubCategoriesInUse(List<SubCategory> subCategories) {
+	@RequestMapping(value = "/add-category", method = RequestMethod.GET)
+	public String addCategoryGet(ModelMap model) {
 		
+		model.addAttribute("category", new Category());
+		
+		return "add-category";
+	}
+	
+	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
+	public String addCategoryPost(@Valid Category category, BindingResult result) {
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		if (category.getName().isEmpty()) {
+			result.rejectValue("name", "error.name", "Nazwa kategorii nie może być pusta");
+		}
+		
+		if (categoryRepository.findByUserAndNameAndType(user, category.getName(), 
+				category.getType()).size() > 0) {
+			result.rejectValue("name", "error.name", "Podana kategoria dla danego rodzaju już istnieje");
+		}
+		
+		if (result.hasErrors()) {
+			return "add-category";
+		}
+		
+		category.setUser(user);
+		categoryRepository.save(category);
+		
+		return "redirect:/categories";
+	}
+	
+	private boolean areSubCategoriesInUse(List<SubCategory> subCategories) {
 		for (SubCategory subCategory : subCategories) {
 			if (isSubCategoryInUse(subCategory)) {
 				return true;
@@ -168,54 +199,38 @@ public class CategoryController {
 	
 ////////////////////////////////OLD
 	
-	@RequestMapping(value = {"/add-category"}, method = RequestMethod.GET)
-	public String addCategory(ModelMap model) {
-		
-		model.addAttribute("subCategory", new SubCategory());
-		
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-		List<Category> categories = categoryRepository.findByUser(user);
-		model.put("categories", categories);
-		
-		return "add-category";
-	}
+//	@RequestMapping(value = {"/add-category"}, method = RequestMethod.GET)
+//	public String addCategory(ModelMap model) {
+//		
+//		model.addAttribute("subCategory", new SubCategory());
+//		
+//		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+//		List<Category> categories = categoryRepository.findByUser(user);
+//		model.put("categories", categories);
+//		
+//		return "add-category";
+//	}
+//	
+//	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
+//	public String addCategoryPost(ModelMap model, SubCategory subCategory, BindingResult result) {
+//		
+//		if (subCategory.getCategory() == null) {
+//			result.rejectValue("category", "error.category", "Wybierz kategorię");
+//		}
+//		
+//		if (result.hasErrors()) {
+//			User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+//			List<Category> categories = categoryRepository.findByUser(user);
+//			model.put("categories", categories);
+//			
+//			return "add-category";
+//		}
+//		
+//		subCategoryRepository.save(subCategory);
+//		
+//		return "redirect:/index";
+//	}
 	
-	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
-	public String addCategoryPost(ModelMap model, SubCategory subCategory, BindingResult result) {
-		
-		if (subCategory.getCategory() == null) {
-			result.rejectValue("category", "error.category", "Wybierz kategorię");
-		}
-		
-		if (result.hasErrors()) {
-			User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-			List<Category> categories = categoryRepository.findByUser(user);
-			model.put("categories", categories);
-			
-			return "add-category";
-		}
-		
-		subCategoryRepository.save(subCategory);
-		
-		return "redirect:/index";
-	}
 	
-	@RequestMapping(value = "/add-main-category", method = RequestMethod.GET)
-	public String addMainCategory(ModelMap model) {
-		
-		model.addAttribute("category", new Category());
-		
-		return "add-main-category";
-	}
-	
-	@RequestMapping(value = "/add-main-category", method = RequestMethod.POST)
-	public String addMainCategoryPost(@Valid Category category) {
-		
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-		category.setUser(user);
-		categoryRepository.save(category);
-		
-		return "redirect:/add-category";
-	}
 
 }
