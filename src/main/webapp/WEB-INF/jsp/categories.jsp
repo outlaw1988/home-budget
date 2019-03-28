@@ -91,18 +91,21 @@ function highlightFirstRow() {
 	var firstRow = $("#categories-table tbody tr:first")
 	firstRow.addClass('highlight');
 	return firstRow;
-	//console.log("First row selected, category is: " + firstRow.find('td').html());
 }
 
 function highlightFirstRowAndGetSubcategories() {
 	var firstRow = highlightFirstRow();
 	
-	var subCategoriesData = getSubcategories(firstRow.find('td').html());
-	for (var i = 0; i < subCategoriesData.length; i++) {
-		console.log(subCategoriesData[i]);
+	if (firstRow.length != 0) {
+		var subCategoriesData = getSubcategories(firstRow.find('td').html());
+		for (var i = 0; i < subCategoriesData.length; i++) {
+			console.log(subCategoriesData[i]);
+		}
+		removeTableContent("sub-categories-table");
+		updateTable("sub-categories-table", subCategoriesData);
+	} else {
+		removeTableContent("sub-categories-table");
 	}
-	removeTableContent("sub-categories-table");
-	updateTable("sub-categories-table", subCategoriesData);
 }
 
 $("#categories-table > tbody").delegate('tr', 'click', function() {
