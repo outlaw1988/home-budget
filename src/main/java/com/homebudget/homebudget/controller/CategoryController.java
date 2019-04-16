@@ -134,6 +134,45 @@ public class CategoryController {
 		return "redirect:/categories";
 	}
 	
+	@RequestMapping(value = "/add-subcategory-{categoryId}", method = RequestMethod.GET)
+	public String addSubCategoryGet(ModelMap model, @PathVariable(value = "categoryId") int categoryId) {
+		
+		Category category = categoryRepository.findById(categoryId);
+		
+		if (!category.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("subCategory", new SubCategory(category));
+		model.put("categoryName", category.getName());
+		
+		return "add-sub-category";
+	}
+	
+	@RequestMapping(value = "/add-subcategory-{categoryId}", method = RequestMethod.POST)
+	public String addSubCategoryPost(ModelMap model, @Valid SubCategory subCategory, 
+				@PathVariable(value = "categoryId") int categoryId, BindingResult result) {
+		
+		Category category = categoryRepository.findById(categoryId);
+		
+		if (!category.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		if (subCategoryRepository.findByCategoryAndName(category, subCategory.getName()).size() > 0) {
+			result.rejectValue("name", "error.name", "Podana podkategoria dla danej kategorii już istnieje");
+		}
+		
+		if (result.hasErrors()) {
+			model.put("categoryName", category.getName());
+			return "add-sub-category";
+		}
+		
+		subCategoryRepository.save(subCategory);
+		
+		return "redirect:/categories";
+	}
+	
 	@RequestMapping(value = "/add-category", method = RequestMethod.GET)
 	public String addCategoryGet(ModelMap model) {
 		
@@ -185,52 +224,4 @@ public class CategoryController {
 		}
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-////////////////////////////////OLD
-	
-//	@RequestMapping(value = {"/add-category"}, method = RequestMethod.GET)
-//	public String addCategory(ModelMap model) {
-//		
-//		model.addAttribute("subCategory", new SubCategory());
-//		
-//		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-//		List<Category> categories = categoryRepository.findByUser(user);
-//		model.put("categories", categories);
-//		
-//		return "add-category";
-//	}
-//	
-//	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
-//	public String addCategoryPost(ModelMap model, SubCategory subCategory, BindingResult result) {
-//		
-//		if (subCategory.getCategory() == null) {
-//			result.rejectValue("category", "error.category", "Wybierz kategorię");
-//		}
-//		
-//		if (result.hasErrors()) {
-//			User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
-//			List<Category> categories = categoryRepository.findByUser(user);
-//			model.put("categories", categories);
-//			
-//			return "add-category";
-//		}
-//		
-//		subCategoryRepository.save(subCategory);
-//		
-//		return "redirect:/index";
-//	}
-	
-	
-
 }

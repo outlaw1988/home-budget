@@ -4,31 +4,25 @@
 
 <div class="container">
 
-	<h1>Dodaj kategorię</h1>
+	<h1>Dodaj podkategorię</h1>
+	<h3 align="center">Kategoria: ${categoryName}</h3>
 
-	<form:form method="post" modelAttribute="category">
+	<form:form method="post" modelAttribute="subCategory">
 	
 		<form:hidden path="id" />
-	
-		<br/><br/>
+		<form:hidden path="category" />
 		
-		<form:label path="type">Rodzaj:</form:label>
-		<form:select path="type">
-			<option value="EXPENDITURE">WYDATEK</option>
-			<option value="INCOME">DOCHÓD</option>
-		</form:select>
-	
 		<br/><br/>
 		
 		<fieldset class="form-group">
-			<form:label path="name">Nazwa kategorii:</form:label>
+			<form:label path="name">Nazwa podkategorii:</form:label>
 			<form:input path="name" type="text" class="form-control" required="required" />
 			<form:errors path="name" class="error" />
 		</fieldset>
 		
 		<br/><br/>
 		
-		<button id="add-category" type="submit" class="btn btn-success">Dodaj</button>
+		<button id="add-sub-category" type="submit" class="btn btn-success">Dodaj</button>
 	
 	</form:form>
 

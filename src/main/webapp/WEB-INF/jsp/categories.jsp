@@ -81,15 +81,14 @@
 	
 	<br/>
 	
-	<div style="text-align:center;">
-		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-subcategory">Dodaj podkategorię</a>
-	</div>
+	<div id="add-subcategory-div" style="text-align:center;"></div>
 
 </div>
 
 <script type="text/javascript">
 
-window.onload = highlightFirstRow;
+window.onload = loadPage;
+var currSelectedCategory;
 
 $(function () {
     var token = $("meta[name='_csrf']").attr("content");
@@ -99,9 +98,16 @@ $(function () {
     });
 });
 
+function loadPage() {
+	highlightFirstRow();
+	manageAddSubCategoryButton();
+}
+
 function highlightFirstRow() {
 	var firstRow = $("#categories-table tbody tr:first")
 	firstRow.addClass('highlight');
+	currSelectedCategory = firstRow.find('td').html()
+	//console.log("Current selected cateogry: " + currSelectedCategory);
 	return firstRow;
 }
 
@@ -126,8 +132,10 @@ $("#categories-table > tbody").delegate('tr', 'click', function() {
 });
 
 $("#categories-table > tbody").delegate('tr', 'click', function() {
-	var categoryId = $(this).find('td').html();
-	var subCategoriesData = getSubcategories(categoryId);
+	currSelectedCategory = $(this).find('td').html();
+	manageAddSubCategoryButton();
+	//console.log("Current selected cateogry: " + currSelectedCategory);
+	var subCategoriesData = getSubcategories(currSelectedCategory);
 	removeTableContent("sub-categories-table");
 	updateTable("sub-categories-table", subCategoriesData);
 });
@@ -174,6 +182,7 @@ $("#sel-type").change(function() {
 			removeTableContent("categories-table");
 			updateTable("categories-table", result);
 			highlightFirstRowAndGetSubcategories();
+			manageAddSubCategoryButton();
 		}
 	});
 	
@@ -204,6 +213,15 @@ function updateTable(tableId, data) {
 	/* $("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>');
 	$("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>'); */
 	
+}
+
+function manageAddSubCategoryButton() {
+	var rowsNum = $('#categories-table tbody tr').length;
+	if (rowsNum > 0) {
+		$("#add-subcategory-div").html("<a id='add-subcategory' type='button' class='btn btn-success' href='/add-subcategory-" + currSelectedCategory + "'>Dodaj podkategorię</a>");
+	} else if (rowsNum == 0) {
+		$("#add-subcategory-div").html("");
+	}
 }
 
 function removeTableContent(tableId) {
