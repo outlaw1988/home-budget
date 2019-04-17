@@ -47,9 +47,7 @@
 	
 	<br/>
 	
-	<div style="text-align:center;">
-		<a id="add-expenditure" type="button" class="btn btn-success" href="/add-category">Dodaj kategorię</a>
-	</div>
+	<div id="add-category-div" style="text-align:center;"></div>
 	
 	<br/>
 	
@@ -89,6 +87,7 @@
 
 window.onload = loadPage;
 var currSelectedCategory;
+var typeId; // 1 - expenditure, 2 - income
 
 $(function () {
     var token = $("meta[name='_csrf']").attr("content");
@@ -99,6 +98,8 @@ $(function () {
 });
 
 function loadPage() {
+	typeId = 1;
+	manageAddCategoryButton();
 	highlightFirstRow();
 	manageAddSubCategoryButton();
 }
@@ -164,6 +165,14 @@ function getSubcategories(categoryId) {
 $("#sel-type").change(function() {
 	var type = $(this).val();
 	
+	if (type == "expenditure") {
+		typeId = 1;
+	} else if (type == "income") {
+		typeId = 2;
+	}
+	
+	manageAddCategoryButton();
+	
 	var data = {
 		"type": type
 	}
@@ -208,6 +217,10 @@ function updateTable(tableId, data) {
 		
 	}
 	
+}
+
+function manageAddCategoryButton() {
+	$("#add-category-div").html("<a id='add-category' type='button' class='btn btn-success' href='/add-category-" + typeId + "'>Dodaj kategorię</a>");
 }
 
 function manageAddSubCategoryButton() {

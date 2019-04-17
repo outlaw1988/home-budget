@@ -14,8 +14,8 @@
 		
 		<form:label path="type">Rodzaj:</form:label>
 		<form:select path="type">
-			<option value="EXPENDITURE">WYDATEK</option>
-			<option value="INCOME">DOCHÓD</option>
+			<option value="EXPENDITURE" <c:if test="${typeId == 1}"> selected="selected" </c:if> >WYDATEK</option>
+			<option value="INCOME" <c:if test="${typeId == 2}"> selected="selected" </c:if> >DOCHÓD</option>
 		</form:select>
 	
 		<br/><br/>

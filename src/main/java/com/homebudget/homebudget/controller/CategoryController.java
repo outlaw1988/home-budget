@@ -60,16 +60,18 @@ public class CategoryController {
 	
 	// CATEGORIES
 	
-	@RequestMapping(value = "/add-category", method = RequestMethod.GET)
-	public String addCategoryGet(ModelMap model) {
+	@RequestMapping(value = "/add-category-{typeId}", method = RequestMethod.GET)
+	public String addCategoryGet(ModelMap model, @PathVariable(value = "typeId") int typeId) {
 		
 		model.addAttribute("category", new Category());
+		model.put("typeId", typeId);
 		
 		return "add-category";
 	}
 	
-	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
-	public String addCategoryPost(@Valid Category category, BindingResult result) {
+	@RequestMapping(value = "/add-category-{typeId}", method = RequestMethod.POST)
+	public String addCategoryPost(ModelMap model, @Valid Category category, BindingResult result,
+								  @PathVariable(value = "typeId") int typeId) {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
@@ -83,6 +85,10 @@ public class CategoryController {
 		}
 		
 		if (result.hasErrors()) {
+			
+			if (category.getType().equals(Type.EXPENDITURE)) model.put("typeId", 1);
+			else if (category.getType().equals(Type.INCOME)) model.put("typeId", 2);
+			
 			return "add-category";
 		}
 		
