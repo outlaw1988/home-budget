@@ -57,6 +57,40 @@ public class CategoryController {
 		
 		return "categories";
 	}
+	
+	// CATEGORIES
+	
+	@RequestMapping(value = "/add-category", method = RequestMethod.GET)
+	public String addCategoryGet(ModelMap model) {
+		
+		model.addAttribute("category", new Category());
+		
+		return "add-category";
+	}
+	
+	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
+	public String addCategoryPost(@Valid Category category, BindingResult result) {
+		
+		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		
+		if (category.getName().isEmpty()) {
+			result.rejectValue("name", "error.name", "Nazwa kategorii nie może być pusta");
+		}
+		
+		if (categoryRepository.findByUserAndNameAndType(user, category.getName(), 
+				category.getType()).size() > 0) {
+			result.rejectValue("name", "error.name", "Podana kategoria dla danego rodzaju już istnieje");
+		}
+		
+		if (result.hasErrors()) {
+			return "add-category";
+		}
+		
+		category.setUser(user);
+		categoryRepository.save(category);
+		
+		return "redirect:/categories";
+	}
 
 	@RequestMapping(value = "/remove-category-{categoryId}", method = RequestMethod.GET)
 	public String removeCategoryGet(ModelMap model, 
@@ -99,6 +133,43 @@ public class CategoryController {
 		
 		return "redirect:/categories";
 	}
+	
+	@RequestMapping(value = "/update-category-{categoryId}", method = RequestMethod.GET)
+	public String updateCategoryGet(ModelMap model, @PathVariable(value="categoryId") int categoryId) {
+		
+		Category category = categoryRepository.findById(categoryId);
+		
+		if (!category.getUser().getUsername().equals(Utils.getLoggedInUserName())) return "forbidden";
+		
+		model.addAttribute("category", category);
+		
+		return "update-category";
+	}
+	
+	@RequestMapping(value = "/update-category-{categoryId}", method = RequestMethod.POST)
+	public String updateCategoryPost(ModelMap model, @Valid Category category, BindingResult result, 
+									 @PathVariable(value="categoryId") int categoryId) {
+		
+		if (!category.getUser().getUsername().equals(Utils.getLoggedInUserName())) return "forbidden";
+		
+		Category categoryIn = categoryRepository.findById(categoryId);
+		
+		if (!category.getName().equals(categoryIn.getName()) && 
+			 categoryRepository.findByUserAndNameAndType(category.getUser(), category.getName(), 
+					 									 category.getType()).size() > 0) {
+			result.rejectValue("name", "error.name", "Podana kategoria dla danego rodzaju już istnieje");
+		}
+		
+		if (result.hasErrors()) {
+			return "update-category";
+		}
+		
+		categoryRepository.save(category);
+		
+		return "redirect:/categories";
+	}
+	
+	// SUBCATEGORIES
 	
 	@RequestMapping(value = "/remove-subcategory-{subCategoryId}", method = RequestMethod.GET)
 	public String removeSubCategoryGet(ModelMap model, 
@@ -173,34 +244,45 @@ public class CategoryController {
 		return "redirect:/categories";
 	}
 	
-	@RequestMapping(value = "/add-category", method = RequestMethod.GET)
-	public String addCategoryGet(ModelMap model) {
+	@RequestMapping(value = "/update-subcategory-{subCategoryId}", method = RequestMethod.GET)
+	public String updateSubCategoryGet(ModelMap model, 
+									   @PathVariable(value="subCategoryId") int subCategoryId) {
 		
-		model.addAttribute("category", new Category());
+		SubCategory subCategory = subCategoryRepository.findById(subCategoryId);
 		
-		return "add-category";
+		if (!subCategory.getCategory().getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("subCategory", subCategory);
+		model.put("categoryName", subCategory.getCategory().getName());
+		
+		return "update-subcategory";
 	}
 	
-	@RequestMapping(value = "/add-category", method = RequestMethod.POST)
-	public String addCategoryPost(@Valid Category category, BindingResult result) {
+	@RequestMapping(value = "/update-subcategory-{subCategoryId}", method = RequestMethod.POST)
+	public String updateSubCategoryPost(ModelMap model, @Valid SubCategory subCategory,
+			@PathVariable(value="subCategoryId") int subCategoryId, BindingResult result) {
 		
-		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
+		SubCategory subCategoryIn = subCategoryRepository.findById(subCategoryId);
 		
-		if (category.getName().isEmpty()) {
-			result.rejectValue("name", "error.name", "Nazwa kategorii nie może być pusta");
+		if (!subCategory.getCategory().getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
 		}
 		
-		if (categoryRepository.findByUserAndNameAndType(user, category.getName(), 
-				category.getType()).size() > 0) {
-			result.rejectValue("name", "error.name", "Podana kategoria dla danego rodzaju już istnieje");
+		if (!subCategory.getName().equals(subCategoryIn.getName()) && 
+			subCategoryRepository.findByCategoryAndName(subCategory.getCategory(), 
+			subCategory.getName()).size() > 0) {
+			
+			result.rejectValue("name", "error.name", "Podana podkategoria dla danej kategorii już istnieje");
 		}
-		
+			
 		if (result.hasErrors()) {
-			return "add-category";
+			model.put("categoryName", subCategory.getCategory().getName());
+			return "update-subcategory";
 		}
 		
-		category.setUser(user);
-		categoryRepository.save(category);
+		subCategoryRepository.save(subCategory);
 		
 		return "redirect:/categories";
 	}

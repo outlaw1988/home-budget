@@ -35,7 +35,7 @@
 			        		<img id="three-dots" class="three-dots" src="images/three_dots_res_2.png" 
 			        		alt="Three dots">
 			        		<div id="my-dropdown-category-${loop.index}" class="dropdown-content">
-				            	<a href="#">Edytuj</a>
+				            	<a href="/update-category-${category.id}">Edytuj</a>
 				                <a href="/remove-category-${category.id}">Usuń</a>
 				            </div>
 			            </div>
@@ -69,7 +69,7 @@
 			        		<img id="three-dots" class="three-dots" src="images/three_dots_res_2.png" 
 			        		alt="Three dots">
 			        		<div id="my-dropdown-subcategory-${loop.index}" class="dropdown-content">
-				            	<a href="#">Edytuj</a>
+				            	<a href="/update-subcategory-${subCategory.id}">Edytuj</a>
 				                <a href="/remove-subcategory-${subCategory.id}">Usuń</a>
 				            </div>
 			            </div>
@@ -107,7 +107,6 @@ function highlightFirstRow() {
 	var firstRow = $("#categories-table tbody tr:first")
 	firstRow.addClass('highlight');
 	currSelectedCategory = firstRow.find('td').html()
-	//console.log("Current selected cateogry: " + currSelectedCategory);
 	return firstRow;
 }
 
@@ -134,7 +133,6 @@ $("#categories-table > tbody").delegate('tr', 'click', function() {
 $("#categories-table > tbody").delegate('tr', 'click', function() {
 	currSelectedCategory = $(this).find('td').html();
 	manageAddSubCategoryButton();
-	//console.log("Current selected cateogry: " + currSelectedCategory);
 	var subCategoriesData = getSubcategories(currSelectedCategory);
 	removeTableContent("sub-categories-table");
 	updateTable("sub-categories-table", subCategoriesData);
@@ -203,15 +201,12 @@ function updateTable(tableId, data) {
 		cell2.innerHTML = data[i].name;
 		
 		if (tableId == "categories-table") {
-			cell3.innerHTML = "<div class='dropdown' onclick='dropDownCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-category-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
+			cell3.innerHTML = "<div class='dropdown' onclick='dropDownCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-category-" + i + "' class='dropdown-content'> <a href='/update-category-" + data[i].id + "'>Edytuj</a> <a href='/remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
 		} else if (tableId == "sub-categories-table") {
-			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-subcategory-" + data[i].id + "'>Usuń</a> </div> </div>";
+			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='/update-subcategory-" + data[i].id + "'>Edytuj</a> <a href='remove-subcategory-" + data[i].id + "'>Usuń</a> </div> </div>";
 		}
 		
 	}
-	
-	/* $("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>');
-	$("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>'); */
 	
 }
 
