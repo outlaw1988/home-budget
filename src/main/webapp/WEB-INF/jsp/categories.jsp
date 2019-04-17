@@ -18,7 +18,7 @@
 	
 	<br/>
 
-	<table id="categories-table" class="table table-striped category-table"> <!-- table-striped -->
+	<table id="categories-table" class="table table-striped category-table">
 		<thead>
 			<tr>
 				<th colspan="3" class="table-header"><b>Kategorie</b></th>
