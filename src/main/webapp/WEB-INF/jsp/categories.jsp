@@ -18,7 +18,7 @@
 	
 	<br/>
 
-	<table id="categories-table" class="table table-striped category-table"> <!-- table-striped -->
+	<table id="categories-table" class="table table-striped category-table">
 		<thead>
 			<tr>
 				<th colspan="3" class="table-header"><b>Kategorie</b></th>
@@ -35,7 +35,7 @@
 			        		<img id="three-dots" class="three-dots" src="images/three_dots_res_2.png" 
 			        		alt="Three dots">
 			        		<div id="my-dropdown-category-${loop.index}" class="dropdown-content">
-				            	<a href="#">Edytuj</a>
+				            	<a href="/update-category-${category.id}">Edytuj</a>
 				                <a href="/remove-category-${category.id}">Usuń</a>
 				            </div>
 			            </div>
@@ -44,6 +44,10 @@
 			</c:forEach>
 		</tbody>
 	</table>
+	
+	<br/>
+	
+	<div id="add-category-div" style="text-align:center;"></div>
 	
 	<br/>
 	
@@ -63,7 +67,7 @@
 			        		<img id="three-dots" class="three-dots" src="images/three_dots_res_2.png" 
 			        		alt="Three dots">
 			        		<div id="my-dropdown-subcategory-${loop.index}" class="dropdown-content">
-				            	<a href="#">Edytuj</a>
+				            	<a href="/update-subcategory-${subCategory.id}">Edytuj</a>
 				                <a href="/remove-subcategory-${subCategory.id}">Usuń</a>
 				            </div>
 			            </div>
@@ -72,12 +76,18 @@
 			</c:forEach>
 		</tbody>
 	</table>
+	
+	<br/>
+	
+	<div id="add-subcategory-div" style="text-align:center;"></div>
 
 </div>
 
 <script type="text/javascript">
 
-window.onload = highlightFirstRow;
+window.onload = loadPage;
+var currSelectedCategory;
+var typeId; // 1 - expenditure, 2 - income
 
 $(function () {
     var token = $("meta[name='_csrf']").attr("content");
@@ -87,22 +97,30 @@ $(function () {
     });
 });
 
+function loadPage() {
+	typeId = 1;
+	manageAddCategoryButton();
+	highlightFirstRow();
+	manageAddSubCategoryButton();
+}
+
 function highlightFirstRow() {
 	var firstRow = $("#categories-table tbody tr:first")
 	firstRow.addClass('highlight');
+	currSelectedCategory = firstRow.find('td').html()
 	return firstRow;
-	//console.log("First row selected, category is: " + firstRow.find('td').html());
 }
 
 function highlightFirstRowAndGetSubcategories() {
 	var firstRow = highlightFirstRow();
 	
-	var subCategoriesData = getSubcategories(firstRow.find('td').html());
-	for (var i = 0; i < subCategoriesData.length; i++) {
-		console.log(subCategoriesData[i]);
+	if (firstRow.length != 0) {
+		var subCategoriesData = getSubcategories(firstRow.find('td').html());
+		removeTableContent("sub-categories-table");
+		updateTable("sub-categories-table", subCategoriesData);
+	} else {
+		removeTableContent("sub-categories-table");
 	}
-	removeTableContent("sub-categories-table");
-	updateTable("sub-categories-table", subCategoriesData);
 }
 
 $("#categories-table > tbody").delegate('tr', 'click', function() {
@@ -114,12 +132,9 @@ $("#categories-table > tbody").delegate('tr', 'click', function() {
 });
 
 $("#categories-table > tbody").delegate('tr', 'click', function() {
-	var categoryId = $(this).find('td').html();
-	console.log("Row clicked, category is: " + categoryId);
-	var subCategoriesData = getSubcategories(categoryId);
-	for (var i = 0; i < subCategoriesData.length; i++) {
-		console.log(subCategoriesData[i]);
-	}
+	currSelectedCategory = $(this).find('td').html();
+	manageAddSubCategoryButton();
+	var subCategoriesData = getSubcategories(currSelectedCategory);
 	removeTableContent("sub-categories-table");
 	updateTable("sub-categories-table", subCategoriesData);
 });
@@ -150,6 +165,14 @@ function getSubcategories(categoryId) {
 $("#sel-type").change(function() {
 	var type = $(this).val();
 	
+	if (type == "expenditure") {
+		typeId = 1;
+	} else if (type == "income") {
+		typeId = 2;
+	}
+	
+	manageAddCategoryButton();
+	
 	var data = {
 		"type": type
 	}
@@ -166,6 +189,7 @@ $("#sel-type").change(function() {
 			removeTableContent("categories-table");
 			updateTable("categories-table", result);
 			highlightFirstRowAndGetSubcategories();
+			manageAddSubCategoryButton();
 		}
 	});
 	
@@ -186,16 +210,26 @@ function updateTable(tableId, data) {
 		cell2.innerHTML = data[i].name;
 		
 		if (tableId == "categories-table") {
-			cell3.innerHTML = "<div class='dropdown' onclick='dropDownCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-category-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
+			cell3.innerHTML = "<div class='dropdown' onclick='dropDownCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-category-" + i + "' class='dropdown-content'> <a href='/update-category-" + data[i].id + "'>Edytuj</a> <a href='/remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
 		} else if (tableId == "sub-categories-table") {
-			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='#'>Edytuj</a> <a href='remove-category-" + data[i].id + "'>Usuń</a> </div> </div>";
+			cell3.innerHTML = "<div class='dropdown' onclick='dropDownSubCategory(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-subcategory-" + i + "' class='dropdown-content'> <a href='/update-subcategory-" + data[i].id + "'>Edytuj</a> <a href='remove-subcategory-" + data[i].id + "'>Usuń</a> </div> </div>";
 		}
 		
 	}
 	
-	/* $("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>');
-	$("#" + tableId + " tbody").append('<tr><td>my data</td><td>more data</td></tr>'); */
-	
+}
+
+function manageAddCategoryButton() {
+	$("#add-category-div").html("<a id='add-category' type='button' class='btn btn-success' href='/add-category-" + typeId + "'>Dodaj kategorię</a>");
+}
+
+function manageAddSubCategoryButton() {
+	var rowsNum = $('#categories-table tbody tr').length;
+	if (rowsNum > 0) {
+		$("#add-subcategory-div").html("<a id='add-subcategory' type='button' class='btn btn-success' href='/add-subcategory-" + currSelectedCategory + "'>Dodaj podkategorię</a>");
+	} else if (rowsNum == 0) {
+		$("#add-subcategory-div").html("");
+	}
 }
 
 function removeTableContent(tableId) {

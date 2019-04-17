@@ -37,12 +37,12 @@ public class UserService {
     	return userRepository.findByResetToken(resetToken);
     }
     
-    public void saveUser(User user, boolean updateMode) {
+    public void saveUserAndSet(User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        user.setPasswordConfirm(new BCryptPasswordEncoder().encode(user.getPasswordConfirm()));
         user.setEnable(1);
         user.setRoles(new HashSet<Authorities>(roleRepository.findAll()));
-        User userReturned = userRepository.save(user);
+        //User userReturned = userRepository.save(user);
+        userRepository.save(user);
         
 //        if (!updateMode) {
 //        	Authorities role = new Authorities();
@@ -51,7 +51,10 @@ public class UserService {
 //            
 //            roleRepository.save(role);
 //        }
-        
+    }
+    
+    public void saveUser(User user) {
+    	userRepository.save(user);
     }
     
 }

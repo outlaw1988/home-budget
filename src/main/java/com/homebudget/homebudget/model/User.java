@@ -35,8 +35,6 @@ public class User {
     @NotNull
     private String password;
     
-    @Column(name = "password_confirm")
-    @NotNull
     @Transient
     private String passwordConfirm;
     

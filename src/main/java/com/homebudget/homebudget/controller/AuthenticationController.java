@@ -62,7 +62,7 @@ public class AuthenticationController {
 			return "registration";
 		}
 		
-		userService.saveUser(user, false);
+		userService.saveUserAndSet(user);
 		
 		model.addAttribute("user", new User());
 		model.put("successMessage", "Użytkownik został poprawnie zarejestrowany");

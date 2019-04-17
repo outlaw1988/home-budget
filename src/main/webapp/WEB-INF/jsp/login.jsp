@@ -23,11 +23,11 @@
 	          <label for="password" class="sr-only">Hasło</label>
 	          <input type="password" id="password" name="password" class="form-control" placeholder="Hasło" required>
 	        </p>
-	        <p>
+	        <!-- <p>
 	        	<span>Pamiętaj mnie</span>
 		    	<input type="checkbox" name="remember-me">
 		   
-		    </p>
+		    </p> -->
 				<input name="_csrf" type="hidden" value="21720837-cb10-4314-9350-76e2dc4660fa" />
 	        <button id="sign-in" class="btn btn-lg btn-primary btn-block" type="submit">Zaloguj się</button>
 	      </form>
@@ -36,9 +36,9 @@
 	      		<span class="error">${credentialsError}</span>
 	      </p>
 	      
-	      <p style="text-align: center;">
+	      <!-- <p style="text-align: center;">
 	      		<a id="forgot-password" href="/forgot-password">Zapomniałeś hasła?</a>
-	      </p>
+	      </p> -->
 	      
 	      <p style="text-align: center;">
 	      		<a id="sign-up" href="/registration">Zarejestruj się</a>

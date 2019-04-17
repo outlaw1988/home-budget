@@ -2,6 +2,7 @@ package com.homebudget.homebudget.controller;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -136,7 +137,7 @@ public class ExpendituresController {
 	public String removeExpenditurePost(HttpServletRequest request, 
 										@PathVariable(value = "expenditureId") int expenditureId) {
 		
-		java.util.Set<String> params = request.getParameterMap().keySet();
+		Set<String> params = request.getParameterMap().keySet();
 		Expenditure expenditure = expenditureRepository.findById(expenditureId);
 		
 		if (!expenditure.getUser().getUsername().equals(Utils.getLoggedInUserName())) {

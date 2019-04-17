@@ -26,7 +26,11 @@ public class SubCategory {
 	private String name;
 	
 	public SubCategory() {
-		
+		// empty
+	}
+	
+	public SubCategory(Category category) {
+		this.category = category;
 	}
 
 	public int getId() {
