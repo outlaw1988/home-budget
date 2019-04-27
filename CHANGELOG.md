@@ -1,5 +1,14 @@
 # Changelog - Home budget application
 
+## [0.3.0] 2019-04-27
+
+### Added
+- Expenditures/incomes summary
+- Categories management
+
+### Changed
+- Fix table width
+
 ## [0.2.0] 2019-03-22
 
 ### Added
