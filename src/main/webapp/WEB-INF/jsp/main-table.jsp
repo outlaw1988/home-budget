@@ -27,14 +27,16 @@
 	<h3>Dochody</h3>
 	
 	<table id="incomes-table" class="table table-striped table-hover">
-		<col width="30%">
-  		<col width="30%">
-  		<col width="30%">
+		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
 	      <th scope="col">Podkategoria</th>
 	      <th scope="col">Wartość</th>
+	      <th scope="col">Średnia</th>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -43,6 +45,7 @@
 	        	<td>${income.subCategory.category.name}</td>
 	        	<td>${income.subCategory.name}</td>
 	        	<td>${income.sumValue}</td>
+	        	<td>${income.average}</td>
 	      	</tr>
 	  	</c:forEach>
 	  	<tr>
@@ -57,14 +60,16 @@
 	<h3>Wydatki</h3>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
-		<col width="30%">
-  		<col width="30%">
-  		<col width="30%">
+		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
 	  <thead>
 	    <tr>
 	      <th scope="col">Kategoria</th>
 	      <th scope="col">Podkategoria</th>
 	      <th scope="col">Wartość</th>
+	      <th scope="col">Średnia</th>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -73,6 +78,7 @@
 	        	<td>${expenditure.subCategory.category.name}</td>
 	        	<td>${expenditure.subCategory.name}</td>
 	        	<td>${expenditure.sumValue}</td>
+	        	<td>${expenditure.average}</td>
 	      	</tr>
 	  	</c:forEach>
 	  	<tr>
@@ -86,11 +92,13 @@
 	<h3>Podsumowanie</h3>
 	
 	<table id="summary-table" class="table table-striped table-hover">
-		<col width="30%">
-  		<col width="30%">
-  		<col width="30%">
+		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
+  		<col width="20%">
 		<thead>
 			<tr>
+				<td></td>
 				<td></td>
 				<td></td>
 				<td></td>
@@ -101,6 +109,7 @@
 				<td></td>
 				<td><b>Nadwyżka:</b></td>
 				<td><b>${diff}</b></td>
+				<td></td>
 			</tr>
 		</tbody>
 	</table>
@@ -217,19 +226,22 @@ function drawTable(data, tableType) {
 		var cell1 = row.insertCell(0);
 		var cell2 = row.insertCell(1);
 		var cell3 = row.insertCell(2);
+		var cell4 = row.insertCell(3);
 		cell1.innerHTML = data.accumulatedItems[i].subCategory.category.name;
 		cell2.innerHTML = data.accumulatedItems[i].subCategory.name;
 		cell3.innerHTML = data.accumulatedItems[i].sumValue.toFixed(2);
+		cell4.innerHTML = data.accumulatedItems[i].average.toFixed(2);
 	}
 	
 	var row = table.insertRow(-1);
 	var cell1 = row.insertCell(0);
 	var cell2 = row.insertCell(1);
 	var cell3 = row.insertCell(2);
+	var cell4 = row.insertCell(3);
 	cell1.innerHTML = "";
 	cell2.innerHTML = "<b>Suma brutto:</b>";
 	cell3.innerHTML = "<b>" + data.sum.toFixed(2) + "</b>";
-	
+	cell4.innerHTML = "";
 }
 
 function updateSummaryTable() {
@@ -246,10 +258,12 @@ function updateSummaryTable() {
 			var cell1 = row.insertCell(0);
 			var cell2 = row.insertCell(1);
 			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
 			
 			cell1.innerHTML = "";
 			cell2.innerHTML = "<b>Nadwyżka</b>";
 			cell3.innerHTML = "<b>" + result.diffValue.toFixed(2) + "</b>";
+			cell4.innerHTML = "";
 	    }
 	});
 }

@@ -1,6 +1,7 @@
 package com.homebudget.homebudget.controller;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -21,6 +22,8 @@ import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.model.AccumulatedItem;
+import com.homebudget.homebudget.model.Expenditure;
+import com.homebudget.homebudget.model.Income;
 import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
@@ -46,11 +49,15 @@ public class MainTableController {
 	
 	BigDecimal incomesSum;
 	BigDecimal expendituresSum;
+	MonthYear currMonthYear;
+	User user;
 	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
 		
-		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
+		user = userRepository.findByUsername(getLoggedInUserName()).get(0);
+		currMonthYear = checkAndAddMonthYear(getCurrentWarsawTime(), monthYearRepository, user);
+		
 		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
 		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
@@ -122,6 +129,9 @@ public class MainTableController {
 		}
 		
 		List<AccumulatedItem> accumulatedItems = generateAccumulatedItems(items, type);
+		
+		accumulatedItems.stream().forEach(System.out::println);
+		
 		return accumulatedItems.stream()
 				.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
 				.collect(Collectors.toList());
@@ -158,14 +168,32 @@ public class MainTableController {
 			}
 			
 			if (type.equals("income")) {
-				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.INCOME));
+				List<Income> incomes = incomeRepository.findBySubCategory(subCategory);
+				BigDecimal average = computeAverage(incomes);
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.INCOME, average));
 			} else if (type.equals("expenditure")) {
-				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.EXPENDITURE));
+				List<Expenditure> expenditures = expenditureRepository.findBySubCategory(subCategory);
+				BigDecimal average = computeAverage(expenditures);
+				accumulatedItems.add(new AccumulatedItem(subCategory, sum, Type.EXPENDITURE, average));
 			}
 			
 		}
 		
 		return accumulatedItems;
+	}
+	
+	private BigDecimal computeAverage(List<? extends Item> items) {
+		
+		BigDecimal sum = items.stream()
+				.filter(it -> it.getMonthYear().getId() != currMonthYear.getId())
+				.map(it -> it.getValue())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
+		
+		int numOfFinishedMonths = monthYearRepository.findByUser(user).size() - 1;
+		
+		if (numOfFinishedMonths == 0) return new BigDecimal(0);
+		
+		return sum.divide(new BigDecimal(numOfFinishedMonths)).setScale(2, RoundingMode.CEILING);
 	}
 	
 }

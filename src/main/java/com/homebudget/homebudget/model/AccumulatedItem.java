@@ -8,11 +8,21 @@ public class AccumulatedItem {
 	private SubCategory subCategory;
 	private BigDecimal sumValue;
 	private Type type;
+	private BigDecimal average;
 	
-	public AccumulatedItem(SubCategory subCategory, BigDecimal sumValue, Type type) {
+	public BigDecimal getAverage() {
+		return average;
+	}
+
+	public void setAverage(BigDecimal average) {
+		this.average = average;
+	}
+
+	public AccumulatedItem(SubCategory subCategory, BigDecimal sumValue, Type type, BigDecimal average) {
 		this.subCategory = subCategory;
 		this.sumValue = sumValue;
 		this.type = type;
+		this.average = average;
 	}
 
 	public SubCategory getSubCategory() {
@@ -41,9 +51,10 @@ public class AccumulatedItem {
 
 	@Override
 	public String toString() {
-		return "AccumulatedIncome [subCategory=" + subCategory + ", sumValue=" + sumValue + "]";
+		return "AccumulatedItem [subCategory=" + subCategory + ", sumValue=" + sumValue + ", type=" + type
+				+ ", average=" + average + "]";
 	}
-	
+
 }
 
 

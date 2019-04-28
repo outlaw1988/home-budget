@@ -7,5 +7,6 @@ public interface Item {
 	int getId();
 	SubCategory getSubCategory();
 	BigDecimal getValue();
+	MonthYear getMonthYear();
 	
 }
