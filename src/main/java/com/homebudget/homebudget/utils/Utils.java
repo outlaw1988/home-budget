@@ -1,6 +1,7 @@
 package com.homebudget.homebudget.utils;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,6 +70,11 @@ public class Utils {
 			return ((UserDetails) principal).getUsername();
 
 		return principal.toString();
+	}
+	
+	public static Date getCurrentWarsawTime() {
+		LocalDateTime ldt = LocalDateTime.ofInstant(new Date().toInstant(), ZoneId.of("Europe/Warsaw"));
+		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
 	}
 	
 }

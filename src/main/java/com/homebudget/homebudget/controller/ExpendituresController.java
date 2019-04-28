@@ -1,16 +1,8 @@
 package com.homebudget.homebudget.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -89,22 +81,8 @@ public class ExpendituresController {
 		
 		model.addAttribute("expenditure", new Expenditure());
 		
-//		currentDate = new Date();
-//		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Mendoza"));
-//		Date currentDate = calendar.getTime();
-		
-//		LocalDateTime localNow = LocalDateTime.now(TimeZone.getTimeZone("Europe/London").toZoneId());
-		
-//		Instant instant = ldt.toInstant(ZoneOffset.UTC);
-//	    Date date = Date.from(instant);
-		
-		
-		// ZoneId.systemDefault()
-		
-		currentDate = new Date();
-		LocalDateTime ldt = LocalDateTime.ofInstant(currentDate.toInstant(), ZoneId.systemDefault());
-		Date out = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
-		model.put("currentDate", out);
+		currentDate = getCurrentWarsawTime();
+		model.put("currentDate", currentDate);
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
