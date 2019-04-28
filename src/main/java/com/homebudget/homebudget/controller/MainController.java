@@ -1,7 +1,5 @@
 package com.homebudget.homebudget.controller;
 
-import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -28,7 +26,7 @@ public class MainController {
 	public String index(HttpServletRequest request) {
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
-		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
+		Utils.checkAndAddMonthYear(Utils.getCurrentWarsawTime(), monthYearRepository, user);
 		HttpSession session = request.getSession();
 		session.setAttribute("username", Utils.getLoggedInUserName());
 		

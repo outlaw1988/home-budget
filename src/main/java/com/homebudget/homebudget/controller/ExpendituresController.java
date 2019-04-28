@@ -80,7 +80,8 @@ public class ExpendituresController {
 	public String addExpenditure(ModelMap model) {
 		
 		model.addAttribute("expenditure", new Expenditure());
-		currentDate = new Date();
+		
+		currentDate = getCurrentWarsawTime();
 		model.put("currentDate", currentDate);
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);

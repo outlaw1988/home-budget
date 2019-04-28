@@ -1,7 +1,6 @@
 package com.homebudget.homebudget.controller;
 
-import static com.homebudget.homebudget.utils.Utils.getMonthsSortedDescForGivenYear;
-import static com.homebudget.homebudget.utils.Utils.getYearsSortedDesc;
+import static com.homebudget.homebudget.utils.Utils.*;
 
 import java.util.Date;
 import java.util.List;
@@ -81,7 +80,7 @@ public class IncomesController {
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		
 		model.addAttribute("income", new Income());
-		currentDate = new Date();
+		currentDate = getCurrentWarsawTime();
 		model.put("currentDate", currentDate);
 		
 		List<Category> categories = categoryRepository.findByTypeAndUserOrderByName(Type.INCOME, 
