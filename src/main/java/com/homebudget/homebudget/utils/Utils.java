@@ -23,9 +23,6 @@ public class Utils {
 		
 		LocalDateTime localDate = date.toInstant().atZone(ZoneId.of("Europe/Warsaw")).toLocalDateTime();
 		
-		System.out.println("Hour: " + localDate.getHour());
-		System.out.println("Minutes: " + localDate.getMinute());
-		
 		int year = localDate.getYear();
 		int month = localDate.getMonthValue();
 		
