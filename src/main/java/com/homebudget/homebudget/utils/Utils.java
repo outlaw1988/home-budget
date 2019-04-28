@@ -1,6 +1,5 @@
 package com.homebudget.homebudget.utils;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -22,7 +21,10 @@ public class Utils {
 	public static MonthYear checkAndAddMonthYear(Date date, MonthYearRepository monthYearRepository, 
 			User user) {
 		
-		LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDateTime localDate = date.toInstant().atZone(ZoneId.of("Europe/Warsaw")).toLocalDateTime();
+		
+		System.out.println("Hour: " + localDate.getHour());
+		System.out.println("Minutes: " + localDate.getMinute());
 		
 		int year = localDate.getYear();
 		int month = localDate.getMonthValue();
