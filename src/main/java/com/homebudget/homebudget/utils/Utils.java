@@ -76,4 +76,20 @@ public class Utils {
 		return Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
 	}
 	
+	public static int getNumberOfFinishedMonths(List<MonthYear> monthsYears) {
+		
+        LocalDateTime localDate = getCurrentWarsawTime().toInstant().atZone(ZoneId.of("Europe/Warsaw"))
+        						  .toLocalDateTime();
+		
+		int currYear = localDate.getYear();
+		int currMonth = localDate.getMonthValue();
+		int counter = 0;
+		
+		for (MonthYear my : monthsYears) {
+			if (my.getYear() <= currYear && my.getMonth() < currMonth) counter++;
+		}
+		
+		return counter;
+	}
+	
 }
