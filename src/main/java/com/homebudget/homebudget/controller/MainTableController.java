@@ -197,7 +197,9 @@ public class MainTableController {
 	private BigDecimal computeAverage(List<? extends Item> items) {
 		
 		BigDecimal sum = items.stream()
-				.filter(it -> it.getMonthYear().getId() != currMonthYear.getId())
+				.filter(it -> (it.getMonthYear().getYear() < currMonthYear.getYear()) ||
+							  ((it.getMonthYear().getYear() == currMonthYear.getYear()) && 
+							   (it.getMonthYear().getMonth() < currMonthYear.getMonth())))
 				.map(it -> it.getValue())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
