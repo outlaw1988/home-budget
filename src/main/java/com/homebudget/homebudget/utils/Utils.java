@@ -86,7 +86,8 @@ public class Utils {
 		int counter = 0;
 		
 		for (MonthYear my : monthsYears) {
-			if (my.getYear() <= currYear && my.getMonth() < currMonth) counter++;
+			if ((my.getYear() < currYear) || 
+				((my.getYear() == currYear) && (my.getMonth() < currMonth))) counter++;
 		}
 		
 		return counter;
