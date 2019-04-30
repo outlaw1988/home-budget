@@ -2,10 +2,11 @@
 <%@ include file="common/navigation.jspf"%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<div class="container">
+<!-- style="transform: scale(0.8); transform-origin: top left;" -->
+
+<div id="table-cont" class="container">
 
 	<h1>Główna tabela</h1>
-
 	<br/>
 
 	<span>Rok:</span>
@@ -24,7 +25,9 @@
 	
 	<br/><br/>
 	
-	<h3>Dochody</h3>
+	<h3 align="center">Dochody</h3>
+	
+	<!-- zoom: 50 %; transform: scale(calc(2/3)); table-layout: fixed; width: 100%; -->
 	
 	<table id="incomes-table" class="table table-striped table-hover">
 		<col width="20%">
@@ -51,13 +54,13 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<%-- <td><b><fmt:formatNumber type="number" maxFractionDigits="2" value="${incomesSum}"/></b></td> --%>
 	  		<td><b>${incomesSum}</b></td>
+	  		<td><b>${incomesAverage}</b></td>
 	  	</tr>
 	  </tbody>
 	</table>
 	
-	<h3>Wydatki</h3>
+	<h3 align="center">Wydatki</h3>
 	
 	<table id="expenditures-table" class="table table-striped table-hover">
 		<col width="20%">
@@ -85,11 +88,12 @@
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
 	  		<td><b>${expendituresSum}</b></td>
+	  		<td><b>${expendituresAverage}</b></td>
 	  	</tr>
 	  </tbody>
 	</table>
 	
-	<h3>Podsumowanie</h3>
+	<h3 align="center">Podsumowanie</h3>
 	
 	<table id="summary-table" class="table table-striped table-hover">
 		<col width="20%">
@@ -98,18 +102,18 @@
   		<col width="20%">
 		<thead>
 			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<th scope="col"></th>
+				<th scope="col"></th>
+				<th scope="col"><b>Wartość</b></th>
+				<th scope="col"><b>Średnia</b></th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
 				<td></td>
-				<td><b>Nadwyżka:</b></td>
+				<td><b>Bilans:</b></td>
 				<td><b>${diff}</b></td>
-				<td></td>
+				<td><b>${diffAverage}</b></td>
 			</tr>
 		</tbody>
 	</table>
@@ -241,7 +245,7 @@ function drawTable(data, tableType) {
 	cell1.innerHTML = "";
 	cell2.innerHTML = "<b>Suma brutto:</b>";
 	cell3.innerHTML = "<b>" + data.sum.toFixed(2) + "</b>";
-	cell4.innerHTML = "";
+	cell4.innerHTML = "<b>" + data.average.toFixed(2) + "</b>";
 }
 
 function updateSummaryTable() {
@@ -261,9 +265,9 @@ function updateSummaryTable() {
 			var cell4 = row.insertCell(3);
 			
 			cell1.innerHTML = "";
-			cell2.innerHTML = "<b>Nadwyżka</b>";
+			cell2.innerHTML = "<b>Bilans:</b>";
 			cell3.innerHTML = "<b>" + result.diffValue.toFixed(2) + "</b>";
-			cell4.innerHTML = "";
+			cell4.innerHTML = "<b>" + result.average.toFixed(2) + "</b>";
 	    }
 	});
 }

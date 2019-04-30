@@ -47,10 +47,14 @@ public class MainTableController {
 	@Autowired
 	UserRepository userRepository;
 	
-	BigDecimal incomesSum;
-	BigDecimal expendituresSum;
-	MonthYear currMonthYear;
-	User user;
+	private BigDecimal incomesSum;
+	private BigDecimal incomesAverage;
+	
+	private BigDecimal expendituresSum;
+	private BigDecimal expendituresAverage;
+	
+	private MonthYear currMonthYear;
+	private User user;
 	
 	@RequestMapping(value = "/main-table", method = RequestMethod.GET)
 	public String mainTable(ModelMap model) {
@@ -77,6 +81,9 @@ public class MainTableController {
 		incomesSum = sumUp(accumulatedIncomes);
 		model.put("incomesSum", incomesSum);
 		
+		incomesAverage = computeAverage(incomeRepository.findByUserOrderByDateTimeDesc(user));
+		model.put("incomesAverage", incomesAverage);
+		
 		// Expenditures
 		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(months.get(0), 
 													yearsSorted.get(0), "expenditure");
@@ -85,8 +92,12 @@ public class MainTableController {
 		expendituresSum = sumUp(accumulatedExpenditures);
 		model.put("expendituresSum", expendituresSum);
 		
+		expendituresAverage = computeAverage(expenditureRepository.findByUserOrderByDateTimeDesc(user));
+		model.put("expendituresAverage", expendituresAverage);
+		
 		BigDecimal diff = incomesSum.subtract(expendituresSum);
 		model.put("diff", diff);
+		model.put("diffAverage", incomesAverage.subtract(expendituresAverage));
 		
 		return "main-table";
 	}
@@ -98,7 +109,7 @@ public class MainTableController {
 				  								Integer.parseInt(monthYearReq.year), "income");
 		this.incomesSum = sumUp(accumulatedItems);
 		
-		return new AccumulatedItemResponse(accumulatedItems, incomesSum);
+		return new AccumulatedItemResponse(accumulatedItems, incomesSum, incomesAverage);
 	}
 	
 	@RequestMapping(value = "/get-accumulated-expenditures-table", method = RequestMethod.POST)
@@ -109,12 +120,13 @@ public class MainTableController {
 												Integer.parseInt(monthYearReq.year), "expenditure");
 		this.expendituresSum = sumUp(accumulatedItems);
 
-		return new AccumulatedItemResponse(accumulatedItems, expendituresSum);
+		return new AccumulatedItemResponse(accumulatedItems, expendituresSum, expendituresAverage);
 	}
 	
 	@RequestMapping(value = "/get-summary-table", method = RequestMethod.POST)
 	public @ResponseBody SummaryResponse getSummary() {
-		return new SummaryResponse(incomesSum.subtract(expendituresSum));
+		return new SummaryResponse(incomesSum.subtract(expendituresSum), 
+				                   incomesAverage.subtract(expendituresAverage));
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
@@ -130,7 +142,7 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = generateAccumulatedItems(items, type);
 		
-		accumulatedItems.stream().forEach(System.out::println);
+		//accumulatedItems.stream().forEach(System.out::println);
 		
 		return accumulatedItems.stream()
 				.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
@@ -189,7 +201,7 @@ public class MainTableController {
 				.map(it -> it.getValue())
 				.reduce(BigDecimal.ZERO, BigDecimal::add);
 		
-		int numOfFinishedMonths = monthYearRepository.findByUser(user).size() - 1;
+		int numOfFinishedMonths = getNumberOfFinishedMonths(monthYearRepository.findByUser(user));
 		
 		if (numOfFinishedMonths == 0) return new BigDecimal(0);
 		
@@ -204,11 +216,14 @@ class AccumulatedItemResponse {
 	
 	public List<AccumulatedItem> accumulatedItems;
 	public BigDecimal sum;
+	public BigDecimal average;
 	
-	public AccumulatedItemResponse(List<AccumulatedItem> accumulatedItems, BigDecimal sum) {
+	public AccumulatedItemResponse(List<AccumulatedItem> accumulatedItems, BigDecimal sum, 
+							       BigDecimal average) {
 		super();
 		this.accumulatedItems = accumulatedItems;
 		this.sum = sum;
+		this.average = average;
 	}
 	
 }
@@ -216,10 +231,12 @@ class AccumulatedItemResponse {
 class SummaryResponse {
 	
 	public BigDecimal diffValue;
+	public BigDecimal average;
 	
-	public SummaryResponse(BigDecimal diffValue) {
+	public SummaryResponse(BigDecimal diffValue, BigDecimal average) {
 		super();
 		this.diffValue = diffValue;
+		this.average = average;
 	}
 	
 }
