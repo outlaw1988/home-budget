@@ -65,10 +65,8 @@ public class MainTableController {
 		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
 		
 		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
-		//System.out.println("Years sorted: " + yearsSorted);
 		
 		List<Integer> months = getMonthsSortedDescForGivenYear(monthsYears, yearsSorted.get(0));
-		//System.out.println("Months for top year: " + months);
 		
 		model.put("years", yearsSorted);
 		model.put("months", months);
@@ -142,8 +140,6 @@ public class MainTableController {
 		
 		List<AccumulatedItem> accumulatedItems = generateAccumulatedItems(items, type);
 		
-		//accumulatedItems.stream().forEach(System.out::println);
-		
 		return accumulatedItems.stream()
 				.sorted(Comparator.comparing(a -> a.getSubCategory().getCategory().getName()))
 				.collect(Collectors.toList());
@@ -207,7 +203,8 @@ public class MainTableController {
 		
 		if (numOfFinishedMonths == 0) return new BigDecimal(0);
 		
-		return sum.divide(new BigDecimal(numOfFinishedMonths)).setScale(2, RoundingMode.CEILING);
+		return sum.divide(new BigDecimal(numOfFinishedMonths), 2, RoundingMode.HALF_UP)
+				.setScale(2, RoundingMode.CEILING);
 	}
 	
 }
