@@ -2,6 +2,7 @@ package com.homebudget.homebudget.controller;
 
 import static com.homebudget.homebudget.utils.Utils.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -58,8 +59,8 @@ public class DonationsController {
 		List<Donation> donations = donationRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
 		model.put("donations", donations);
 		
-		// get donation rate from database, if not exist set rate from previous month
-		// when current month is first, set 0
+		BigDecimal rate = getDonationRate(monthYear);
+		model.put("donationRate", rate);
 		
 		return "donations";
 	}
@@ -100,6 +101,32 @@ public class DonationsController {
 		List<? extends Item> donations = donationRepository.findByMonthYearOrderByDateTimeDesc(
 											monthYear);
 		return new ItemResponse((List<Item>) donations);
+	}
+	
+	@RequestMapping(value = "/confirm-rate", method = RequestMethod.POST)
+	public void confirmRate() {
+		System.out.println("Confirm rate is active...");
+	}
+	
+	private BigDecimal getDonationRate(MonthYear monthYear) {
+		
+		BigDecimal rate = monthYear.getDonationRate();
+		
+		if (rate != null) {
+			return rate;
+		} else {
+			MonthYear prevMonthYear = getPreviousMonthYear(monthYearRepository, user);
+//			System.out.println("Prev year: " + prevMonthYear.getYear());
+//			System.out.println("Prev month: " + prevMonthYear.getMonth());
+			if (prevMonthYear == null || prevMonthYear.getDonationRate() == null) return new BigDecimal(0);
+			else {
+				rate = prevMonthYear.getDonationRate();
+				monthYear.setDonationRate(rate);
+				monthYearRepository.save(monthYear);
+				return rate;
+			}
+		}
+		
 	}
 	
 }

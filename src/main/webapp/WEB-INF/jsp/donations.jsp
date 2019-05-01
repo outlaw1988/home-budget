@@ -31,8 +31,8 @@
 	<span>Procent od dochodów:</span>
 	<div>
 		<input style="width: 150px; float: left;" type="number" step="0.01" min="0" max="100" 
-				class="form-control" required="required" value="3" />
-		<a href="/confirm-rate"><input type="button" id="confirm-rate" class="btn btn-success" 
+				class="form-control" required="required" value="${donationRate}" />
+		<a onclick=""><input type="button" id="confirm-rate" class="btn btn-success" 
 		   value="Zatwierdź"/></a>
 	</div>
 	
@@ -85,6 +85,10 @@ $(function () {
     $(document).ajaxSend(function (e, xhr, options) {
         xhr.setRequestHeader(header, token);
     });
+});
+
+$("#confirm-rate").click(function() {
+	console.log("Confirm rate clicked...");
 });
 
 $("#sel-year").change(function(){

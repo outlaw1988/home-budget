@@ -3,6 +3,7 @@ package com.homebudget.homebudget.utils;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -91,6 +92,18 @@ public class Utils {
 		}
 		
 		return counter;
+	}
+	
+	public static MonthYear getPreviousMonthYear(MonthYearRepository repository, User user) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(getCurrentWarsawTime());
+		calendar.add(Calendar.MONTH, -1);
+		
+		List<MonthYear> prevMonthYear = repository.findByMonthAndYearAndUser(
+							calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), user);
+		
+		if (prevMonthYear.size() == 0) return null;
+		else return prevMonthYear.get(0);
 	}
 	
 }
