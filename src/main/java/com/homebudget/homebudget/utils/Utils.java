@@ -1,5 +1,7 @@
 package com.homebudget.homebudget.utils;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -94,9 +96,18 @@ public class Utils {
 		return counter;
 	}
 	
-	public static MonthYear getPreviousMonthYear(MonthYearRepository repository, User user) {
+	public static MonthYear getPreviousMonthYear(MonthYearRepository repository, 
+												 MonthYear currMonthYear, User user) {
 		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(getCurrentWarsawTime());
+		Date date = null;
+		try {
+			date = new SimpleDateFormat("dd-MM-yyyy")
+					.parse("10-" + currMonthYear.getMonth() + "-" + currMonthYear.getYear());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		calendar.setTime(date);
 		calendar.add(Calendar.MONTH, -1);
 		
 		List<MonthYear> prevMonthYear = repository.findByMonthAndYearAndUser(

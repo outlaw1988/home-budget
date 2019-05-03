@@ -30,8 +30,9 @@
 	
 	<span>Procent od dochodów:</span>
 	<div>
-		<input style="width: 150px; float: left;" type="number" step="0.01" min="0" max="100" 
-				class="form-control" required="required" value="${donationRate}" />
+		<input id="donation-rate" style="width: 150px; float: left;" type="number" 
+		step="0.01" min="0" max="100" class="form-control" required="required" 
+		value="${donationRate}" />
 		<a onclick=""><input type="button" id="confirm-rate" class="btn btn-success" 
 		   value="Zatwierdź"/></a>
 	</div>
@@ -88,7 +89,24 @@ $(function () {
 });
 
 $("#confirm-rate").click(function() {
-	console.log("Confirm rate clicked...");
+	var data = {
+		"rate": $("#donation-rate").val(),
+		"month": $("#sel-month").val(),
+		"year": $("#sel-year").val()
+	}
+	
+	var json = JSON.stringify(data);
+	
+	$.ajax({
+		type: "POST",
+		contentType: "application/json; charset=utf-8",
+	    dataType : 'json',
+	    url: "/confirm-rate",
+	    data: json,
+	    success: function(result) {
+	    	
+	    }
+	});
 });
 
 $("#sel-year").change(function(){
@@ -106,7 +124,7 @@ $("#sel-year").change(function(){
 	    dataType : 'json',
 	    url: "/change-year",
 	    data: json,
-		success :function(result) {
+		success: function(result) {
 	    	
 			var slctMonth = $("#sel-month"); 
 			slctMonth.empty();
@@ -156,8 +174,9 @@ function updateTable(month, year) {
 	    dataType : 'json',
 	    url: "/get-donations-table",
 	    data: json,
-		success :function(result) {
+		success: function(result) {
 			drawTable(result);
+			updateDonationRate(result.donationRate);
 	    }
 	});
 }
@@ -179,6 +198,10 @@ function drawTable(data) {
 		cell4.innerHTML = "<div class='dropdown' onclick='dropDown(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-" + i + "' class='dropdown-content'> <a href='update-donation-" + data.items[i].id + "'>Edytuj</a> <a href='remove-donation-" + data.items[i].id + "'>Usuń</a> </div> </div>";
 	}
 	
+}
+
+function updateDonationRate(rate) {
+	$("#donation-rate").val(rate);
 }
 
 function dropDown(counter) {

@@ -93,19 +93,26 @@ public class DonationsController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/get-donations-table", method = RequestMethod.POST)
-	public @ResponseBody ItemResponse getExpendituresTable(@RequestBody MonthYearRequest monthYearReq) {
+	public @ResponseBody ItemResponse getDonationsTable(@RequestBody MonthYearRequest monthYearReq) {
 		
 		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(Integer.parseInt(monthYearReq.month), 
 				Integer.parseInt(monthYearReq.year), user).get(0);
 		
 		List<? extends Item> donations = donationRepository.findByMonthYearOrderByDateTimeDesc(
 											monthYear);
-		return new ItemResponse((List<Item>) donations);
+		return new ItemResponse((List<Item>) donations, getDonationRate(monthYear).toString());
 	}
 	
 	@RequestMapping(value = "/confirm-rate", method = RequestMethod.POST)
-	public void confirmRate() {
-		System.out.println("Confirm rate is active...");
+	public @ResponseBody ItemResponse confirmRate(@RequestBody DonationRequest donation) {
+		
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(
+				Integer.parseInt(donation.month), 
+				Integer.parseInt(donation.year), user).get(0);
+		monthYear.setDonationRate(new BigDecimal(donation.rate));
+		monthYearRepository.save(monthYear);
+		
+		return null;
 	}
 	
 	private BigDecimal getDonationRate(MonthYear monthYear) {
@@ -115,16 +122,16 @@ public class DonationsController {
 		if (rate != null) {
 			return rate;
 		} else {
-			MonthYear prevMonthYear = getPreviousMonthYear(monthYearRepository, user);
-//			System.out.println("Prev year: " + prevMonthYear.getYear());
-//			System.out.println("Prev month: " + prevMonthYear.getMonth());
-			if (prevMonthYear == null || prevMonthYear.getDonationRate() == null) return new BigDecimal(0);
+			MonthYear prevMonthYear = getPreviousMonthYear(monthYearRepository, monthYear, user);
+			if (prevMonthYear == null || prevMonthYear.getDonationRate() == null) {
+				rate = new BigDecimal(0);
+			}
 			else {
 				rate = prevMonthYear.getDonationRate();
-				monthYear.setDonationRate(rate);
-				monthYearRepository.save(monthYear);
-				return rate;
 			}
+			monthYear.setDonationRate(rate);
+			monthYearRepository.save(monthYear);
+			return rate;
 		}
 		
 	}

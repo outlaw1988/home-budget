@@ -92,13 +92,26 @@ class MonthYearRequest {
 	public String year;
 }
 
+class DonationRequest {
+	public String rate;
+	public String month;
+	public String year;
+}
+
 // Response classes
 class ItemResponse {
 	
 	public List<Item> items;
+	public String donationRate;
 	
 	public ItemResponse(List<Item> items) {
 		this.items = items;
+		this.donationRate = null;
+	}
+	
+	public ItemResponse(List<Item> items, String rate) {
+		this.items = items;
+		this.donationRate = rate;
 	}
 	
 }
