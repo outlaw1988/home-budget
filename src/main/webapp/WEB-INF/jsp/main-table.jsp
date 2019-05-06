@@ -54,8 +54,20 @@
 	  	<tr>
 	  		<td></td>
 	  		<td><b>Suma brutto: </b></td>
-	  		<td><b>${incomesSum}</b></td>
-	  		<td><b>${incomesAverage}</b></td>
+	  		<td><b>${incomesGrossSum}</b></td>
+	  		<td><b>${incomesGrossAverage}</b></td>
+	  	</tr>
+	  	<tr>
+	  		<td></td>
+	  		<td><b>Dotacje:</b></td>
+	  		<td><b>${donationsSum}</b></td>
+	  		<td><b>${donationsAverage}</b></td>
+	  	</tr>
+	  	<tr>
+	  		<td></td>
+	  		<td><b>Suma netto:</b></td>
+	  		<td><b>${incomesNetSum}</b></td>
+	  		<td><b>${incomesNetAverage}</b></td>
 	  	</tr>
 	  </tbody>
 	</table>

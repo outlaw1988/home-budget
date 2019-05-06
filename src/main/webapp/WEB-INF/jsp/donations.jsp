@@ -73,7 +73,42 @@
 		        	</td>
 			 	</tr>
 			 </c:forEach>
+			 <tr>
+	  		<td></td>
+	  		<td><b>Suma: </b></td>
+	  		<td><b>${donationsSum}</b></td>
+	  		<td></td>
+	  	</tr>
 		</tbody>	  
+	</table>
+	
+	<table id="summary-table" class="table table-striped table-hover">
+		<col width="20%">
+		<col width="25%">
+  		<col width="10%">
+  		<col width="5%">
+  		<thead>
+  			<tr>
+  				<th scope="col"></th>
+	  			<th scope="col"></th>
+	  			<th scope="col"></th>
+	  			<th scope="col"></th>
+  			</tr>
+  		</thead>
+  		<tbody>
+			<tr>
+				<td></td>
+				<td><b>Do wpłacenia:</b></td>
+				<td><b>${totalToPay}</b></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><b>Pozostało:</b></td>
+				<td><b>${remaining}</b></td>
+				<td></td>
+			</tr>
+		</tbody>
 	</table>
 
 </div>
@@ -101,12 +136,16 @@ $("#confirm-rate").click(function() {
 		type: "POST",
 		contentType: "application/json; charset=utf-8",
 	    dataType : 'json',
+	    async: false,
 	    url: "/confirm-rate",
 	    data: json,
 	    success: function(result) {
 	    	
 	    }
 	});
+	
+	removeTableContent("summary-table");
+	updateSummaryTable();
 });
 
 $("#sel-year").change(function(){
@@ -138,7 +177,10 @@ $("#sel-year").change(function(){
 			month.selectedIndex = 0;
 			
 			removeTableContent("donations-table");
+			removeTableContent("summary-table");
+			
 			updateTable(month, year);
+			updateSummaryTable();
 	    }
 	});
 });
@@ -148,7 +190,10 @@ $("#sel-month").change(function(){
 	var year = $("#sel-year").val();
 	
 	removeTableContent("donations-table");
+	removeTableContent("summary-table");
+	
 	updateTable(month, year);
+	updateSummaryTable();
 });
 
 function removeTableContent(tableName) {
@@ -198,6 +243,61 @@ function drawTable(data) {
 		cell4.innerHTML = "<div class='dropdown' onclick='dropDown(" + i + ")''> <img id='three-dots' class='three-dots' src='images/three_dots_res_2.png' alt='Three dots'> <div id='my-dropdown-" + i + "' class='dropdown-content'> <a href='update-donation-" + data.items[i].id + "'>Edytuj</a> <a href='remove-donation-" + data.items[i].id + "'>Usuń</a> </div> </div>";
 	}
 	
+	var row = table.insertRow(-1);
+	var cell1 = row.insertCell(0);
+	var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+	var cell4 = row.insertCell(3);
+	cell1.innerHTML = "";
+	cell2.innerHTML = "<b>Suma:</b>";
+	cell3.innerHTML = "<b>" + data.sum.toFixed(2) + "</b>";
+	cell4.innerHTML = "";
+	
+}
+
+function updateSummaryTable() {
+	
+	var data = {
+			"month": $("#sel-month").val(),
+			"year": $("#sel-year").val()
+		}
+		
+	var json = JSON.stringify(data);
+	
+	$.ajax({
+		type: "POST",
+		async: false,
+		contentType: "application/json; charset=utf-8",
+	    dataType : 'json',
+	    url: "/get-summary-donations-table",
+	    data: json,
+		success :function(result) {
+			var table = document.getElementById("summary-table").getElementsByTagName('tbody')[0];
+			var row = table.insertRow(-1);
+			
+			var cell1 = row.insertCell(0);
+			var cell2 = row.insertCell(1);
+			var cell3 = row.insertCell(2);
+			var cell4 = row.insertCell(3);
+			
+			cell1.innerHTML = "";
+			cell2.innerHTML = "<b>Do wpłacenia:</b>";
+			cell3.innerHTML = "<b>" + result.totalToPay.toFixed(2) + "</b>";
+			cell4.innerHTML = "";
+			
+			row = table.insertRow(-1);
+			
+			cell1 = row.insertCell(0);
+			cell2 = row.insertCell(1);
+			cell3 = row.insertCell(2);
+			cell4 = row.insertCell(3);
+			
+			cell1.innerHTML = "";
+			cell2.innerHTML = "<b>Pozostało:</b>";
+			cell3.innerHTML = "<b>" + result.remaining.toFixed(2) + "</b>";
+			cell4.innerHTML = "";
+	    }
+	});
 }
 
 function updateDonationRate(rate) {

@@ -22,8 +22,10 @@ import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.SubCategory;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.model.AccumulatedItem;
+import com.homebudget.homebudget.model.Donation;
 import com.homebudget.homebudget.model.Expenditure;
 import com.homebudget.homebudget.model.Income;
+import com.homebudget.homebudget.service.DonationRepository;
 import com.homebudget.homebudget.service.ExpenditureRepository;
 import com.homebudget.homebudget.service.IncomeRepository;
 import com.homebudget.homebudget.service.MonthYearRepository;
@@ -47,8 +49,14 @@ public class MainTableController {
 	@Autowired
 	UserRepository userRepository;
 	
-	private BigDecimal incomesSum;
-	private BigDecimal incomesAverage;
+	@Autowired
+	DonationRepository donationRepository;
+	
+	private BigDecimal incomesGrossSum;
+	private BigDecimal incomesGrossAverage;
+	
+	private BigDecimal incomesNetSum;
+	private BigDecimal incomesNetAverage;
 	
 	private BigDecimal expendituresSum;
 	private BigDecimal expendituresAverage;
@@ -63,39 +71,48 @@ public class MainTableController {
 		currMonthYear = checkAndAddMonthYear(getCurrentWarsawTime(), monthYearRepository, user);
 		
 		List<MonthYear> monthsYears = monthYearRepository.findByUser(user);
-		
 		List<Integer> yearsSorted = getYearsSortedDesc(monthsYears);
-		
 		List<Integer> months = getMonthsSortedDescForGivenYear(monthsYears, yearsSorted.get(0));
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(months.get(0), 
+				yearsSorted.get(0), user);
 		
 		model.put("years", yearsSorted);
 		model.put("months", months);
 		
-		// Incomes
-		List<AccumulatedItem> accumulatedIncomes = manageAccumulation(months.get(0), 
-													yearsSorted.get(0), "income");
-		
+		// Incomes gross
+		List<AccumulatedItem> accumulatedIncomes = manageAccumulation(monthYear, "income");
 		model.put("incomes", accumulatedIncomes);
-		incomesSum = sumUp(accumulatedIncomes);
-		model.put("incomesSum", incomesSum);
+		incomesGrossSum = sumUpAccumulatedItems(accumulatedIncomes);
+		model.put("incomesGrossSum", incomesGrossSum);
+		incomesGrossAverage = computeAverage(incomeRepository.findByUserOrderByDateTimeDesc(user));
+		model.put("incomesGrossAverage", incomesGrossAverage);
 		
-		incomesAverage = computeAverage(incomeRepository.findByUserOrderByDateTimeDesc(user));
-		model.put("incomesAverage", incomesAverage);
+		// Donations
+		List<Donation> donations = donationRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
+		BigDecimal donationsSum = sumUpItems(donations);
+		model.put("donationsSum", donationsSum);
+		BigDecimal donationsAverage = computeAverage(donationRepository.findByUser(user));
+		model.put("donationsAverage", donationsAverage);
+		
+		// Incomes net
+		incomesNetSum = incomesGrossSum.subtract(donationsSum);
+		model.put("incomesNetSum", incomesNetSum);
+		incomesNetAverage = incomesGrossAverage.subtract(donationsAverage);
+		model.put("incomesNetAverage", incomesNetAverage);
 		
 		// Expenditures
-		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(months.get(0), 
-													yearsSorted.get(0), "expenditure");
+		List<AccumulatedItem> accumulatedExpenditures = manageAccumulation(monthYear, "expenditure");
 		
 		model.put("expenditures", accumulatedExpenditures);
-		expendituresSum = sumUp(accumulatedExpenditures);
+		expendituresSum = sumUpAccumulatedItems(accumulatedExpenditures);
 		model.put("expendituresSum", expendituresSum);
 		
 		expendituresAverage = computeAverage(expenditureRepository.findByUserOrderByDateTimeDesc(user));
 		model.put("expendituresAverage", expendituresAverage);
 		
-		BigDecimal diff = incomesSum.subtract(expendituresSum);
+		BigDecimal diff = incomesNetSum.subtract(expendituresSum);
 		model.put("diff", diff);
-		model.put("diffAverage", incomesAverage.subtract(expendituresAverage));
+		model.put("diffAverage", incomesNetAverage.subtract(expendituresAverage));
 		
 		return "main-table";
 	}
@@ -103,39 +120,42 @@ public class MainTableController {
 	@RequestMapping(value = "/get-accumulated-incomes-table", method = RequestMethod.POST)
 	public @ResponseBody AccumulatedItemResponse getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
 		
-		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
-				  								Integer.parseInt(monthYearReq.year), "income");
-		this.incomesSum = sumUp(accumulatedItems);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(
+				Integer.parseInt(monthYearReq.month), 
+				Integer.parseInt(monthYearReq.year), user);
+		List<AccumulatedItem> accumulatedItems = manageAccumulation(monthYear, "income");
+		this.incomesGrossSum = sumUpAccumulatedItems(accumulatedItems);
 		
-		return new AccumulatedItemResponse(accumulatedItems, incomesSum, incomesAverage);
+		return new AccumulatedItemResponse(accumulatedItems, incomesGrossSum, incomesGrossAverage);
 	}
 	
 	@RequestMapping(value = "/get-accumulated-expenditures-table", method = RequestMethod.POST)
 	public @ResponseBody AccumulatedItemResponse getExpendituresTable(@RequestBody MonthYearRequest 
 																	monthYearReq) {
 		
-		List<AccumulatedItem> accumulatedItems = manageAccumulation(Integer.parseInt(monthYearReq.month), 
-												Integer.parseInt(monthYearReq.year), "expenditure");
-		this.expendituresSum = sumUp(accumulatedItems);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(
+				Integer.parseInt(monthYearReq.month), 
+				Integer.parseInt(monthYearReq.year), user);
+		List<AccumulatedItem> accumulatedItems = manageAccumulation(monthYear, "expenditure");
+		this.expendituresSum = sumUpAccumulatedItems(accumulatedItems);
 
 		return new AccumulatedItemResponse(accumulatedItems, expendituresSum, expendituresAverage);
 	}
 	
 	@RequestMapping(value = "/get-summary-table", method = RequestMethod.POST)
 	public @ResponseBody SummaryResponse getSummary() {
-		return new SummaryResponse(incomesSum.subtract(expendituresSum), 
-				                   incomesAverage.subtract(expendituresAverage));
+		return new SummaryResponse(incomesGrossSum.subtract(expendituresSum), 
+				                   incomesGrossAverage.subtract(expendituresAverage));
 	}
 	
-	private List<AccumulatedItem> manageAccumulation(int month, int year, String type) {
-		User user = userRepository.findByUsername(getLoggedInUserName()).get(0);
-		List<MonthYear> monthYear = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
+	private List<AccumulatedItem> manageAccumulation(MonthYear monthYear, String type) {
+		
 		List<? extends Item> items = null;
 		
 		if (type.equals("income")) {
-			items = incomeRepository.findByMonthYear(monthYear.get(0));
+			items = incomeRepository.findByMonthYear(monthYear);
 		} else if (type.equals("expenditure")) {
-			items = expenditureRepository.findByMonthYear(monthYear.get(0));
+			items = expenditureRepository.findByMonthYear(monthYear);
 		}
 		
 		List<AccumulatedItem> accumulatedItems = generateAccumulatedItems(items, type);
@@ -145,15 +165,10 @@ public class MainTableController {
 				.collect(Collectors.toList());
 	}
 	
-	private BigDecimal sumUp(List<AccumulatedItem> accumulatedItems) {
-		
-		BigDecimal sum = new BigDecimal(0);
-		
-		for (AccumulatedItem it : accumulatedItems) {
-			sum = sum.add(it.getSumValue());
-		}
-		
-		return sum;
+	private BigDecimal sumUpAccumulatedItems(List<AccumulatedItem> accumulatedItems) {
+		return accumulatedItems.stream()
+				.map(it -> it.getSumValue())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	
 	private List<AccumulatedItem> generateAccumulatedItems(List<? extends Item> items, String type) {

@@ -1,5 +1,6 @@
 package com.homebudget.homebudget.utils;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Set;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.MonthYearRepository;
@@ -29,10 +31,10 @@ public class Utils {
 		int year = localDate.getYear();
 		int month = localDate.getMonthValue();
 		
-		List<MonthYear> monthYearList = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
 		
-		if (monthYearList.size() == 0) return monthYearRepository.save(new MonthYear(month, year, user));
-		else return monthYearList.get(0);
+		if (monthYear == null) return monthYearRepository.save(new MonthYear(month, year, user));
+		else return monthYear;
 	}
 	
 	public static List<Integer> getYearsSortedDesc(List<MonthYear> monthsYears) {
@@ -110,11 +112,17 @@ public class Utils {
 		calendar.setTime(date);
 		calendar.add(Calendar.MONTH, -1);
 		
-		List<MonthYear> prevMonthYear = repository.findByMonthAndYearAndUser(
+		MonthYear prevMonthYear = repository.findByMonthAndYearAndUser(
 							calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), user);
 		
-		if (prevMonthYear.size() == 0) return null;
-		else return prevMonthYear.get(0);
+		if (prevMonthYear == null) return null;
+		else return prevMonthYear;
+	}
+	
+	public static BigDecimal sumUpItems(List<? extends Item> items) {
+		return items.stream()
+				.map(d -> d.getValue())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	
 }
