@@ -148,7 +148,7 @@ public class IncomesController {
 		return "redirect:/incomes";
 	}
 	
-	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/update-income-{incomeId}", method = RequestMethod.GET)
 	public String updateIncomeGet(ModelMap model, @PathVariable(value = "incomeId") int incomeId) {
 		
 		Income income = incomeRepository.findById(incomeId);
@@ -170,7 +170,7 @@ public class IncomesController {
 		return "update-income";
 	}
 	
-	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/update-income-{incomeId}", method = RequestMethod.POST)
 	public String updateIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
 		
 		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {

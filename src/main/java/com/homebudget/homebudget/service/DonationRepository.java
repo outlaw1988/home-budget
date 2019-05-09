@@ -12,5 +12,6 @@ public interface DonationRepository extends JpaRepository<Donation, Integer> {
 
 	List<Donation> findByMonthYearOrderByDateTimeDesc(MonthYear monthYear);
 	List<Donation> findByUser(User user);
+	Donation findById(int id);
 	
 }

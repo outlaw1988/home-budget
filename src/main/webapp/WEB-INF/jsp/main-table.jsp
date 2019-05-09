@@ -219,23 +219,19 @@ function updateTable(tableType, month, year) {
 	    dataType : 'json',
 	    url: urlData,
 	    data: json,
-		success :function(result) {
-			drawTable(result, tableType);
+		success: function(result) {
+			if (tableType == "incomes") {
+				drawIncomesTable(result);
+			} else if (tableType == "expenditures") {
+				drawExpendituresTable(result);
+			}
 	    }
 	});
 }
 
-function drawTable(data, tableType) {
+function drawExpendituresTable(data) {
 	
-	var tableId = "";
-	
-	if (tableType == "incomes") {
-		tableId = "incomes-table";
-	} else if (tableType == "expenditures") {
-		tableId = "expenditures-table";
-	}
-	
-	var table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
+	var table = document.getElementById("expenditures-table").getElementsByTagName('tbody')[0];
 	
 	for (var i = 0; i < data.accumulatedItems.length; i++) {
 		var row = table.insertRow(-1);
@@ -258,6 +254,53 @@ function drawTable(data, tableType) {
 	cell2.innerHTML = "<b>Suma brutto:</b>";
 	cell3.innerHTML = "<b>" + data.sum.toFixed(2) + "</b>";
 	cell4.innerHTML = "<b>" + data.average.toFixed(2) + "</b>";
+}
+
+function drawIncomesTable(data) {
+	
+	var table = document.getElementById("incomes-table").getElementsByTagName('tbody')[0];
+	
+	for (var i = 0; i < data.accumulatedItems.length; i++) {
+		var row = table.insertRow(-1);
+		var cell1 = row.insertCell(0);
+		var cell2 = row.insertCell(1);
+		var cell3 = row.insertCell(2);
+		var cell4 = row.insertCell(3);
+		cell1.innerHTML = data.accumulatedItems[i].subCategory.category.name;
+		cell2.innerHTML = data.accumulatedItems[i].subCategory.name;
+		cell3.innerHTML = data.accumulatedItems[i].sumValue.toFixed(2);
+		cell4.innerHTML = data.accumulatedItems[i].average.toFixed(2);
+	}
+	
+	var row = table.insertRow(-1);
+	var cell1 = row.insertCell(0);
+	var cell2 = row.insertCell(1);
+	var cell3 = row.insertCell(2);
+	var cell4 = row.insertCell(3);
+	cell1.innerHTML = "";
+	cell2.innerHTML = "<b>Suma brutto:</b>";
+	cell3.innerHTML = "<b>" + data.grossSum.toFixed(2) + "</b>";
+	cell4.innerHTML = "<b>" + data.grossAverage.toFixed(2) + "</b>";
+	
+	row = table.insertRow(-1);
+	cell1 = row.insertCell(0);
+	cell2 = row.insertCell(1);
+	cell3 = row.insertCell(2);
+	cell4 = row.insertCell(3);
+	cell1.innerHTML = "";
+	cell2.innerHTML = "<b>Dotacje:</b>";
+	cell3.innerHTML = "<b>" + data.donationsSum.toFixed(2) + "</b>";
+	cell4.innerHTML = "<b>" + data.donationsAverage.toFixed(2) + "</b>";
+	
+	row = table.insertRow(-1);
+	cell1 = row.insertCell(0);
+	cell2 = row.insertCell(1);
+	cell3 = row.insertCell(2);
+	cell4 = row.insertCell(3);
+	cell1.innerHTML = "";
+	cell2.innerHTML = "<b>Suma netto:</b>";
+	cell3.innerHTML = "<b>" + data.netSum.toFixed(2) + "</b>";
+	cell4.innerHTML = "<b>" + data.netAverage.toFixed(2) + "</b>";
 }
 
 function updateSummaryTable() {

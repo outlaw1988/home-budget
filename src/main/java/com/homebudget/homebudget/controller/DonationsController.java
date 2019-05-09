@@ -6,13 +6,16 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -98,6 +101,70 @@ public class DonationsController {
 		
 		donation.setMonthYear(monthYear);
 		donation.setUser(user);
+		donationRepository.save(donation);
+		
+		return "redirect:/donations";
+	}
+	
+	@RequestMapping(value = "/remove-donation-{donationId}", method = RequestMethod.GET)
+	public String removeDonationGet(ModelMap model, @PathVariable(value = "donationId") int donationId) {
+		
+		Donation donation = donationRepository.findById(donationId);
+		
+		if (!donation.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		return "remove-donation";
+	}
+	
+	@RequestMapping(value = "/remove-donation-{donationId}", method = RequestMethod.POST)
+	public String removeDonationPost(HttpServletRequest request, 
+									@PathVariable(value = "donationId") int donationId) {
+		
+		Set<String> params = request.getParameterMap().keySet();
+		Donation donation = donationRepository.findById(donationId);
+		
+		if (!donation.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		if (params.contains("yes")) {
+			donationRepository.deleteById(donationId);
+		}
+		
+		return "redirect:/donations";
+	}
+	
+	@RequestMapping(value = "/update-donation-{donationId}", method = RequestMethod.GET)
+	public String updateDonationGet(ModelMap model, @PathVariable(value = "donationId") int donationId) {
+		
+		Donation donation = donationRepository.findById(donationId);
+		
+		if (!donation.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		model.addAttribute("donation", donation);
+		
+		return "update-donation";
+	}
+	
+	@RequestMapping(value = "/update-donation-{donationId}", method = RequestMethod.POST)
+	public String updateDonationPost(ModelMap model, @Valid Donation donation, BindingResult result) {
+		
+		if (!donation.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
+			return "forbidden";
+		}
+		
+		if (result.hasErrors()) {
+			return "update-donation";
+		}
+		
+		MonthYear monthYear = Utils.checkAndAddMonthYear(donation.getDateTime(), monthYearRepository, 
+				donation.getUser());
+		donation.setMonthYear(monthYear);
+		
 		donationRepository.save(donation);
 		
 		return "redirect:/donations";

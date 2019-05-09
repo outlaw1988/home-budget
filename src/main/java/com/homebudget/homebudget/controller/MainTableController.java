@@ -118,7 +118,8 @@ public class MainTableController {
 	}
 	
 	@RequestMapping(value = "/get-accumulated-incomes-table", method = RequestMethod.POST)
-	public @ResponseBody AccumulatedItemResponse getIncomesTable(@RequestBody MonthYearRequest monthYearReq) {
+	public @ResponseBody AccumulatedIncomesResponse getIncomesTable(@RequestBody MonthYearRequest 
+			monthYearReq) {
 		
 		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(
 				Integer.parseInt(monthYearReq.month), 
@@ -126,7 +127,21 @@ public class MainTableController {
 		List<AccumulatedItem> accumulatedItems = manageAccumulation(monthYear, "income");
 		this.incomesGrossSum = sumUpAccumulatedItems(accumulatedItems);
 		
-		return new AccumulatedItemResponse(accumulatedItems, incomesGrossSum, incomesGrossAverage);
+		List<Donation> donations = donationRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
+		BigDecimal donationsSum = sumUpItems(donations);
+		BigDecimal donationsAverage = computeAverage(donationRepository.findByUser(user));
+		
+		incomesNetSum = incomesGrossSum.subtract(donationsSum);
+		incomesNetAverage = incomesGrossAverage.subtract(donationsAverage);
+		
+		return new AccumulatedIncomesResponse()
+				.withAccumulatedItems(accumulatedItems)
+				.withGrossSum(incomesGrossSum)
+				.withGrossAverage(incomesGrossAverage)
+				.withDonationsSum(donationsSum)
+				.withDonationsAverage(donationsAverage)
+				.withNetSum(incomesNetSum)
+				.withNetAverage(incomesNetAverage);
 	}
 	
 	@RequestMapping(value = "/get-accumulated-expenditures-table", method = RequestMethod.POST)
@@ -144,8 +159,8 @@ public class MainTableController {
 	
 	@RequestMapping(value = "/get-summary-table", method = RequestMethod.POST)
 	public @ResponseBody SummaryResponse getSummary() {
-		return new SummaryResponse(incomesGrossSum.subtract(expendituresSum), 
-				                   incomesGrossAverage.subtract(expendituresAverage));
+		return new SummaryResponse(incomesNetSum.subtract(expendituresSum), 
+				                   incomesNetAverage.subtract(expendituresAverage));
 	}
 	
 	private List<AccumulatedItem> manageAccumulation(MonthYear monthYear, String type) {
@@ -225,6 +240,53 @@ public class MainTableController {
 }
 
 // Auxiliary classes
+
+class AccumulatedIncomesResponse {
+	
+	public List<AccumulatedItem> accumulatedItems;
+	public BigDecimal grossSum;
+	public BigDecimal grossAverage;
+	public BigDecimal donationsSum;
+	public BigDecimal donationsAverage;
+	public BigDecimal netSum;
+	public BigDecimal netAverage;
+	
+	public AccumulatedIncomesResponse withAccumulatedItems(List<AccumulatedItem> accumulatedItems) {
+		this.accumulatedItems = accumulatedItems;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withGrossSum(BigDecimal grossSum) {
+		this.grossSum = grossSum;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withGrossAverage(BigDecimal grossAverage) {
+		this.grossAverage = grossAverage;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withDonationsSum(BigDecimal donationsSum) {
+		this.donationsSum = donationsSum;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withDonationsAverage(BigDecimal donationsAverage) {
+		this.donationsAverage = donationsAverage;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withNetSum(BigDecimal netSum) {
+		this.netSum = netSum;
+		return this;
+	}
+	
+	public AccumulatedIncomesResponse withNetAverage(BigDecimal netAverage) {
+		this.netAverage = netAverage;
+		return this;
+	}
+	
+}
 
 class AccumulatedItemResponse {
 	
