@@ -1,8 +1,12 @@
 package com.homebudget.homebudget.utils;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,6 +16,7 @@ import java.util.Set;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.homebudget.homebudget.model.Item;
 import com.homebudget.homebudget.model.MonthYear;
 import com.homebudget.homebudget.model.User;
 import com.homebudget.homebudget.service.MonthYearRepository;
@@ -26,10 +31,10 @@ public class Utils {
 		int year = localDate.getYear();
 		int month = localDate.getMonthValue();
 		
-		List<MonthYear> monthYearList = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
+		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(month, year, user);
 		
-		if (monthYearList.size() == 0) return monthYearRepository.save(new MonthYear(month, year, user));
-		else return monthYearList.get(0);
+		if (monthYear == null) return monthYearRepository.save(new MonthYear(month, year, user));
+		else return monthYear;
 	}
 	
 	public static List<Integer> getYearsSortedDesc(List<MonthYear> monthsYears) {
@@ -91,6 +96,33 @@ public class Utils {
 		}
 		
 		return counter;
+	}
+	
+	public static MonthYear getPreviousMonthYear(MonthYearRepository repository, 
+												 MonthYear currMonthYear, User user) {
+		Calendar calendar = Calendar.getInstance();
+		Date date = null;
+		try {
+			date = new SimpleDateFormat("dd-MM-yyyy")
+					.parse("10-" + currMonthYear.getMonth() + "-" + currMonthYear.getYear());
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		calendar.setTime(date);
+		calendar.add(Calendar.MONTH, -1);
+		
+		MonthYear prevMonthYear = repository.findByMonthAndYearAndUser(
+							calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.YEAR), user);
+		
+		if (prevMonthYear == null) return null;
+		else return prevMonthYear;
+	}
+	
+	public static BigDecimal sumUpItems(List<? extends Item> items) {
+		return items.stream()
+				.map(d -> d.getValue())
+				.reduce(BigDecimal.ZERO, BigDecimal::add);
 	}
 	
 }

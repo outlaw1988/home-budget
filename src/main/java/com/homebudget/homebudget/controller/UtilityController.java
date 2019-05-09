@@ -92,6 +92,12 @@ class MonthYearRequest {
 	public String year;
 }
 
+class DonationRequest {
+	public String rate;
+	public String month;
+	public String year;
+}
+
 // Response classes
 class ItemResponse {
 	
