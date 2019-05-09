@@ -64,7 +64,7 @@ public class IncomesController {
 		model.put("months", months);
 		
 		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(months.get(0), 
-				yearsSorted.get(0), user).get(0);
+				yearsSorted.get(0), user);
 		
 		Utils.checkAndAddMonthYear(new Date(), monthYearRepository, user);
 		
@@ -148,7 +148,7 @@ public class IncomesController {
 		return "redirect:/incomes";
 	}
 	
-	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/update-income-{incomeId}", method = RequestMethod.GET)
 	public String updateIncomeGet(ModelMap model, @PathVariable(value = "incomeId") int incomeId) {
 		
 		Income income = incomeRepository.findById(incomeId);
@@ -170,7 +170,7 @@ public class IncomesController {
 		return "update-income";
 	}
 	
-	@RequestMapping(value = "update-income-{incomeId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/update-income-{incomeId}", method = RequestMethod.POST)
 	public String updateIncomePost(ModelMap model, @Valid Income income, BindingResult result) {
 		
 		if (!income.getUser().getUsername().equals(Utils.getLoggedInUserName())) {
@@ -206,7 +206,7 @@ public class IncomesController {
 		
 		User user = userRepository.findByUsername(Utils.getLoggedInUserName()).get(0);
 		MonthYear monthYear = monthYearRepository.findByMonthAndYearAndUser(Integer.parseInt(monthYearReq.month), 
-				Integer.parseInt(monthYearReq.year), user).get(0);
+				Integer.parseInt(monthYearReq.year), user);
 		
 		List<? extends Item> incomes = incomeRepository.findByMonthYearOrderByDateTimeDesc(monthYear);
 		return new ItemResponse((List<Item>) incomes);

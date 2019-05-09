@@ -1,5 +1,7 @@
 package com.homebudget.homebudget.model;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,6 +24,9 @@ public class MonthYear {
 	@Column(name = "year")
 	private int year;
 	
+	@Column(name = "donation_rate")
+	private BigDecimal donationRate;
+
 	@OneToOne
 	private User user;
 	
@@ -65,6 +70,14 @@ public class MonthYear {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+	
+	public BigDecimal getDonationRate() {
+		return donationRate;
+	}
+
+	public void setDonationRate(BigDecimal donationRate) {
+		this.donationRate = donationRate;
 	}
 	
 }

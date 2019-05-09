@@ -9,7 +9,7 @@ import com.homebudget.homebudget.model.User;
 
 public interface MonthYearRepository extends JpaRepository<MonthYear, Integer> {
 
-	List<MonthYear> findByMonthAndYearAndUser(int month, int year, User user);
+	MonthYear findByMonthAndYearAndUser(int month, int year, User user);
 	List<MonthYear> findByUser(User user);
 	
 }
